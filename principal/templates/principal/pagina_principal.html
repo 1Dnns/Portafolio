@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal</title>
+    <!-- Bootstrap CSS para diseño responsivo -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Portada -->
+    <header class="bg-dark text-white text-center py-5">
+        <h1>{{ portada.nombre_completo }}</h1>
+        <p class="lead">{{ portada.profesion }}</p>
+    </header>
+
+    <!-- Sección Acerca de -->
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-md-4">
+                {% if acerca_de.foto %}
+                <img src="{{ acerca_de.foto.url }}" alt="Foto de {{ portada.nombre_completo }}" class="img-fluid rounded">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <p>{{ acerca_de.descripcion }}</p>
+                <ul>
+                    <li><strong>Fecha de nacimiento:</strong> {{ acerca_de.fecha_nacimiento }}</li>
+                    <li><strong>Dirección:</strong> {{ acerca_de.direccion }}</li>
+                    <li><strong>Teléfono:</strong> {{ acerca_de.telefono }}</li>
+                    <li><strong>Correo:</strong> {{ acerca_de.correo }}</li>
+                </ul>
+                <div>
+                    {% if acerca_de.linkedin %}<a href="{{ acerca_de.linkedin }}" target="_blank">LinkedIn</a>{% endif %}
+                    {% if acerca_de.github %}<a href="{{ acerca_de.github }}" target="_blank">GitHub</a>{% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Habilidades -->
+    <section class="container my-5">
+        <h2>Habilidades</h2>
+        {% for habilidad in habilidades %}
+        <div>
+            <span>{{ habilidad.nombre }}</span>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: {{ habilidad.nivel }}%;" aria-valuenow="{{ habilidad.nivel }}" aria-valuemin="0" aria-valuemax="100">
+                    {{ habilidad.nivel }}%
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    <!-- Formación -->
+    <section class="container my-5">
+        <h2>Formación</h2>
+        <ul>
+            {% for formacion in formacion %}
+            <li>
+                <strong>{{ formacion.titulo }}</strong> - {{ formacion.institucion }} ({{ formacion.fecha_inicio }} - {{ formacion.fecha_fin|default:"Presente" }})
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Experiencia -->
+    <section class="container my-5">
+        <h2>Experiencia Laboral</h2>
+        <ul>
+            {% for experiencia in experiencias %}
+            <li>
+                <strong>{{ experiencia.cargo }}</strong> en {{ experiencia.empresa }} ({{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin|default:"Presente" }})
+                <p>{{ experiencia.descripcion }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Proyectos -->
+    <section class="container my-5">
+        <h2>Proyectos</h2>
+        <div class="row">
+            {% for proyecto in proyectos %}
+            <div class="col-md-4">
+                <div class="card">
+                    {% if proyecto.imagen %}
+                    <img src="{{ proyecto.imagen.url }}" class="card-img-top" alt="{{ proyecto.titulo }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ proyecto.titulo }}</h5>
+                        <p class="card-text">{{ proyecto.descripcion|truncatechars:100 }}</p>
+                        {% if proyecto.categoria == 'dashboard' %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Ver Dashboard</a>
+                        {% else %}
+                        <a href="{{ proyecto.enlace }}" class="btn btn-secondary" target="_blank">Ver en GitHub</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section class="container my-5">
+        <h2>Contacto</h2>
+        <form>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="mensaje">Mensaje</label>
+                <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
