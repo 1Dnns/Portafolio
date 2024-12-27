@@ -38,9 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',  # Déjalo solo una vez aquí
     'principal',
-    'dashboard'
+    'dashboard',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig', #configuracion adicional para utilizzr dash
+    'dpd_static_support',  # Requerido por django-plotly-dash
+    'channels',  # Para soporte de WebSocket en Dash #configuracion adicional para utilizzr dash
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",  # Asegúrate de que tu URL esté permitida
 ]
 
 MIDDLEWARE = [
@@ -50,8 +58,15 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_plotly_dash.middleware.BaseMiddleware',  # Asegúrate de que esté en este orden #configuracion adicional para utilizzr dash
+    'django_plotly_dash.middleware.ExternalRedirectionMiddleware',  # Lo puedes dejar aquí #configuracion adicional para utilizzr dash
 ]
+
+# Configuración para permitir que se cargue en un iframe desde el mismo dominio
+#configuracion adicional para utilizzr dash
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
 
 ROOT_URLCONF = 'Portafolio.urls'
 
@@ -137,9 +152,46 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+#STATIC_URL = 'static/'
+
+#configuracion adicional para utilizzr dash
+STATIC_URL = '/static/'
+
+# Estos son necesarios para que Dash pueda servir los archivos estáticos
+#configuracion adicional para utilizzr dash
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+#configuracion adicional para utilizzr dash
+STATIC_ROOT = BASE_DIR / "staticfiles"  # Esto es para la recopilación de archivos estáticos en producción.
+
+# Configuración para los componentes de Plotly Dash
+PLOTLY_COMPONENTS = [
+    'dash_core_components',
+    'dash_html_components',
+    'dash_renderer',
+    'dpd_static_support',  # Requerido por Django Plotly Dash
+    'dash_bootstrap_components',  # Si usas Bootstrap en Dash
+]
+
+#configuracion adicional para utilizzr dash
+DASH_COMPONENTS = {
+    'path_to_components': 'your_static_folder'
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+###################################################################
+#configuracion adicional para utilizzr dash
+ASGI_APPLICATION = 'Portafolio.asgi.application' 
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Para desarrollo local
+    },
+}

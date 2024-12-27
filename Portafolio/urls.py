@@ -20,4 +20,9 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('principal.urls')),
+    path('diputados/', include('dashboard.urls')),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),  # Dash URLs
 ]
+
+#el primer argumento es el nombre de la url, el segundo indica los url de la app
+
