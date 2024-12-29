@@ -19,7 +19,10 @@ dropdown_options = [{'label': diputado, 'value': diputado} for diputado in diput
 ######################## Creación del Dashboard ##########################
 
 # Crear la aplicación Dash
-app = DjangoDash('DashboardApp')  #debe ser el mismo nombre en el html
+#app = DjangoDash('DashboardApp')  
+
+app = DjangoDash('Diputados')  
+
 
 # Layout de la aplicación
 app.layout = html.Div([
@@ -35,21 +38,25 @@ app.layout = html.Div([
             value=None,  # Valor inicial (sin selección)
             placeholder="Selecciona un Diputado",
         ),
-    ], style={'width': '50%', 'margin': '20px auto'}),
+    ], style={'width': '50%', 'margin': '20px auto'}
+    ),
 
     # Gráficos generales (antes de seleccionar un diputado)
     html.Div([
         html.H3("Gráficos Generales"),
-        dcc.Graph(id='grafico-asistencia-gasto-total', config={'displayModeBar': False},
-                  style={'height': '500px', 'width': '80%', 'margin': 'auto'}),
-    ], id='graficos-generales', style={'display': 'block'}),  # Solo muestra los gráficos generales
+        dcc.Graph(id='grafico-asistencia-gasto-total',
+                  config={'displayModeBar': False, 'responsive': True},
+                  style={'width': '50%', 'margin': '20px auto'})
+                  ], 
+                  id='graficos-generales', style={'display': 'block'}),  # Solo muestra los gráficos generales
 
     # Sección de gráficos específicos del diputado seleccionado
     html.Div([
         html.H3("Gráficos del Diputado Seleccionado"),
         dcc.Graph(id='grafico-mapa', config={'displayModeBar': False},
-                  style={'height': '500px', 'width': '80%', 'margin': 'auto'}),
-    ], id='graficos-diputado', style={'display': 'none'}),  # Solo muestra los gráficos específicos
+                  style={'height': '500px', 'width': '80%', 'margin': 'auto'}
+                  ),], 
+                  id='graficos-diputado', style={'display': 'none'}),  # Solo muestra los gráficos específicos
 ])
 # Callback para actualizar los gráficos generales y específicos
 @app.callback(
@@ -67,10 +74,8 @@ def actualizar_graficos_generales(diputado_seleccionado):
     
     # Obtener el ID del diputado seleccionando su nombre
     diputado_id = df_diputados[df_diputados['Nombre'] == diputado_seleccionado]['id'].iloc[0]
-    
     # Obtener los datos para los gráficos específicos
-    asistencia, gastos_operacionales, personal_apoyo, region, comunas = datos(engine, diputado_id)
-
+    asistencia, gastos_operacionales, personal_apoyo, region, comunas = datos(engine, df_diputados ,diputado_id)
     # Actualizar el gráfico de mapa
     figura_mapa = grafico_mapa(region, comunas)
 
