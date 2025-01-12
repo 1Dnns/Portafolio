@@ -1,13 +1,14 @@
 from django_plotly_dash import DjangoDash
-import dash
-from dash import dcc, html, Input, Output
-from django.conf import settings
-from sqlalchemy import create_engine
-import pandas as pd
-from .utils.funciones_graficos import conexion_DB, grafico_asistencia_gasto_total
-from .utils.funciones_graficos import datos, grafico_mapa
+from dash import dcc, html, Input, Output, no_update
+import plotly.graph_objects as go
+from .utils.funciones_graficos import (
+    conexion_DB, datos, grafico_mapa, grafico_asistencia, 
+    grafico_gastos_mensuales, grafico_asistencia_gasto_total, 
+    grafico_global_gastos_operacionales, grafico_gasto_operacional, 
+    grafico_personal_apoyo, grafico_vacio
+)
 
-######################## Conexion a la base de datos #####################
+######################## Conexión a la base de datos #####################
 engine, df_diputados = conexion_DB()
 
 # Obtener los nombres únicos de los diputados
@@ -15,69 +16,223 @@ diputados = df_diputados['Nombre'].unique()
 # Crear opciones para el menú desplegable en formato de lista de diccionarios
 dropdown_options = [{'label': diputado, 'value': diputado} for diputado in diputados]
 
+#opciones del año
+options_año = [{'label': str(año), 'value': año} for año in range(2022, 2025)]
+#opciones del mes
+options_mes = [
+                    {'label': 'Enero', 'value': 1},
+                    {'label': 'Febrero', 'value': 2},
+                    {'label': 'Marzo', 'value': 3},
+                    {'label': 'Abril', 'value': 4},
+                    {'label': 'Mayo', 'value': 5},
+                    {'label': 'Junio', 'value': 6},
+                    {'label': 'Julio', 'value': 7},
+                    {'label': 'Agosto', 'value': 8},
+                    {'label': 'Septiembre', 'value': 9},
+                    {'label': 'Octubre', 'value': 10},
+                    {'label': 'Noviembre', 'value': 11},
+                    {'label': 'Diciembre', 'value': 12}
+                ]
 
 ######################## Creación del Dashboard ##########################
-
-# Crear la aplicación Dash
-#app = DjangoDash('DashboardApp')  
-
 app = DjangoDash('Diputados')  
-
 
 # Layout de la aplicación
 app.layout = html.Div([
     # Componente Store para mantener el ID del diputado seleccionado
     dcc.Store(id='store-diputado'),
 
-    # Menu desplegable para seleccionar un diputado
+    # Título del Dashboard
+    html.Div(
+        html.H1("Dashboard de Diputados", style={'textAlign': 'center', 'color': '#ffffff'}),
+        style={'backgroundColor': '#08646e', 'padding': '20px'}
+    ),
+
+    # Menú desplegable para seleccionar un diputado
     html.Div([
-        html.H3("Seleccione un Diputado"),
+        html.H3("Seleccione un Diputado", style={'textAlign': 'center', 'color': '#ffffff'}),
         dcc.Dropdown(
             id='dropdown-diputado',
             options=dropdown_options,
             value=None,  # Valor inicial (sin selección)
             placeholder="Selecciona un Diputado",
         ),
-    ], style={'width': '50%', 'margin': '20px auto'}
-    ),
+    ], style={'width': '50%', 'margin': '20px auto'}),
+
+    html.Div([
+        html.H3("Seleccione Mes y Año", style={'textAlign': 'center', 'color': '#ffffff'}),
+        dcc.Dropdown(
+            id='dropdown-mes',
+            options=options_mes,
+            placeholder="Mes",
+            style={'width': '150px', 'height': '40px', 'margin': '10px'}
+        ),
+        dcc.Dropdown(
+            id='dropdown-año',
+            options=options_año,
+            placeholder="Año",
+            style={'width': '150px', 'height': '40px', 'margin': '10px'}
+        )
+    ], id='contenedor-mes-año', style={'width': '50%', 'margin': '20px auto', 'display': 'none', 'justifyContent': 'flex-end'}),
 
     # Gráficos generales (antes de seleccionar un diputado)
     html.Div([
-        html.H3("Gráficos Generales"),
+        html.H3("Gráficos Generales", style={'textAlign': 'center', 'color': '#ffffff'}),
         dcc.Graph(id='grafico-asistencia-gasto-total',
                   config={'displayModeBar': False, 'responsive': True},
-                  style={'width': '50%', 'margin': '20px auto'})
-                  ], 
-                  id='graficos-generales', style={'display': 'block'}),  # Solo muestra los gráficos generales
+                  style={'border': '2px solid #ffffff','margin': '20px auto', 'height': '500px', 'width': '50%'}),
+        dcc.Graph(id='grafico-global-gastos-operacionales',
+                  config={'displayModeBar': False, 'responsive': True},
+                  style={'border': '2px solid #ffffff','margin': '20px auto', 'height': '400px', 'width': '90%'}),
+    ], id='graficos-generales', style={'display': 'block'}),
 
-    # Sección de gráficos específicos del diputado seleccionado
+    # Gráficos específicos del diputado seleccionado
+
     html.Div([
-        html.H3("Gráficos del Diputado Seleccionado"),
-        dcc.Graph(id='grafico-mapa', config={'displayModeBar': False},
-                  style={'height': '500px', 'width': '80%', 'margin': 'auto'}
-                  ),], 
-                  id='graficos-diputado', style={'display': 'none'}),  # Solo muestra los gráficos específicos
-])
-# Callback para actualizar los gráficos generales y específicos
-@app.callback(
-    [Output('grafico-asistencia-gasto-total', 'figure'),
-     Output('grafico-mapa', 'figure'),
-     Output('graficos-generales', 'style'),
-     Output('graficos-diputado', 'style'),
-     Output('store-diputado', 'data')],  # Guardar el ID del diputado seleccionado en el store
-    [Input('dropdown-diputado', 'value')]  # Solo se usa el valor seleccionado del Dropdown
-)
-def actualizar_graficos_generales(diputado_seleccionado):
-    # Si no hay diputado seleccionado, se muestran los gráficos generales
-    if diputado_seleccionado is None:
-        return grafico_asistencia_gasto_total(engine), {}, {'display': 'block'}, {'display': 'none'}, None
-    
-    # Obtener el ID del diputado seleccionando su nombre
-    diputado_id = df_diputados[df_diputados['Nombre'] == diputado_seleccionado]['id'].iloc[0]
-    # Obtener los datos para los gráficos específicos
-    asistencia, gastos_operacionales, personal_apoyo, region, comunas = datos(engine, df_diputados ,diputado_id)
-    # Actualizar el gráfico de mapa
-    figura_mapa = grafico_mapa(region, comunas)
+        html.H3("Gráficos del Diputado Seleccionado", style={'textAlign': 'center', 'color': '#ffffff'}),
 
-    # Actualizar el store con el ID del diputado seleccionado
-    return dash.no_update, figura_mapa, {'display': 'none'}, {'display': 'block'}, diputado_id
+        # Primera fila: Mapa y Gastos Mensuales
+        html.Div([
+            html.Div(
+                dcc.Graph(id='grafico-mapa', config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '30%', 'display': 'inline-block', 'verticalAlign': 'top', 
+                    'border': '2px solid #ffffff', 'margin': '10px', 'height': '600px'}
+            ),
+            html.Div(
+                dcc.Graph(id='grafico-gastos-mensuales', config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '70%', 'display': 'inline-block', 'verticalAlign': 'top', 
+                    'border': '2px solid #ffffff', 'margin': '10px', 'height': '600px'}
+            ),
+        ], style={'display': 'flex', 'justifyContent': 'space-between'}),
+
+        # Segunda fila: Asistencia, Gastos Operacionales y Personal de Apoyo
+        html.Div([
+            html.Div(
+                dcc.Graph(id='grafico-asistencia', config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
+                    'margin': '10px'}
+            ),
+            html.Div(
+                dcc.Graph(id='grafico-gasto-operacional', config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
+                    'margin': '10px'}
+            ),
+            html.Div(
+                dcc.Graph(id='grafico-personal-apoyo', config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
+                    'margin': '10px'}
+            ),
+        ], style={'display': 'flex', 'justifyContent': 'space-between'}),
+    ], id='graficos-diputado', style={'display': 'none'}),
+
+# Sección de Comentarios
+html.Div([
+        html.H3("Comentarios", style={'color': '#ffffff', 'textAlign': 'center'}),
+        html.P(
+            "Fuente: Datos obtenidos de la Cámara de Diputados de Chile. "
+            "Considere que algunos datos pueden estar sujetos a cambios.",
+            style={'color': '#ffffff', 'textAlign': 'center'}
+        )
+    ], style={
+        'backgroundColor': '#08646e',
+        'padding': '10px',
+        'marginTop': '50px',
+        'borderTop': '2px solid #ffffff'
+    })
+], style={
+    'backgroundColor': '#08646e',
+    'fontFamily': 'Arial, sans-serif',
+    'padding': '10px',
+    'margin': '10px',
+    'minHeight': '100vh',
+    'boxSizing': 'border-box'
+})
+
+######################## Callbacks ##########################
+@app.callback(
+    [
+        Output('grafico-asistencia-gasto-total', 'figure'),
+        Output('grafico-global-gastos-operacionales', 'figure'),
+        Output('grafico-mapa', 'figure'),
+        Output('grafico-asistencia', 'figure'),
+        Output('grafico-gastos-mensuales', 'figure'),
+        Output('grafico-gasto-operacional', 'figure'),
+        Output('grafico-personal-apoyo', 'figure'),
+        Output('graficos-generales', 'style'),
+        Output('graficos-diputado', 'style'),
+        Output('store-diputado', 'data'),
+        Output('contenedor-mes-año', 'style')
+    ],
+    [Input('dropdown-diputado', 'value'),
+     Input('dropdown-año', 'value'),
+     Input('dropdown-mes', 'value')]
+)
+def actualizar_graficos(diputado_seleccionado, año, mes):
+    if diputado_seleccionado is None:
+        # Gráficos generales
+        return (
+            grafico_asistencia_gasto_total(engine),
+            grafico_global_gastos_operacionales(engine, desglose=True),
+            no_update, no_update, no_update, no_update, no_update,
+            {'display': 'block'},  # Mostrar gráficos generales
+            {'display': 'none'},   # Ocultar gráficos del diputado
+            None,
+            {'display': 'none'} 
+        )
+    
+    # Obtener el ID del diputado seleccionado
+    diputado_id = df_diputados[df_diputados['Nombre'] == diputado_seleccionado]['id'].iloc[0]
+    asistencia, gastos_operacionales, personal_apoyo, region, comunas = datos(engine, df_diputados, diputado_id)
+
+    # Validación de datos faltantes
+    def validar_datos(df, mes, año):
+        if df.empty or df[(df['Mes'] == mes) & (df['Año'] == año)].empty:
+            return False
+        return True
+
+    # graficos generales del diputado
+    if año is None or mes is None:
+        return (
+        no_update,  # No actualizar gráficos generales
+        no_update,  # No actualizar gráficos generales
+        grafico_mapa(region, comunas),
+        grafico_asistencia(asistencia),
+        grafico_gastos_mensuales(gastos_operacionales, personal_apoyo),
+        grafico_gasto_operacional(gastos_operacionales),
+        grafico_personal_apoyo(personal_apoyo),
+        {'display': 'none'},  # Ocultar gráficos generales
+        {'display': 'inline'}, # Mostrar gráficos del diputado
+        diputado_id,
+        {'display': 'flex'} 
+    )    
+
+    # Validar datos por mes y año
+    grafico_gasto_op = (
+        grafico_gasto_operacional(gastos_operacionales, mes, año)
+        if validar_datos(gastos_operacionales, mes, año)
+        else grafico_vacio("No hay datos disponibles <br> de gastos operacionales <br> para este mes.")
+    )
+
+    grafico_personal_ap = (
+        grafico_personal_apoyo(personal_apoyo, mes, año)
+        if validar_datos(personal_apoyo, mes, año)
+        else grafico_vacio("No hay datos disponibles <br> de personal de apoyo <br> para este mes")
+    )
+
+    # Gráficos específicos del diputado
+    return (
+        no_update,  # No actualizar gráficos generales
+        no_update,  # No actualizar gráficos generales
+        grafico_mapa(region, comunas),
+        grafico_asistencia(asistencia),
+        grafico_gastos_mensuales(gastos_operacionales, personal_apoyo),
+        grafico_gasto_op,
+        grafico_personal_ap,
+        {'display': 'none'},  # Ocultar gráficos generales
+        {'display': 'inline'}, # Mostrar gráficos del diputado
+        diputado_id,
+        {'display': 'flex'}
+    )
+
+
+

@@ -232,8 +232,8 @@ def grafico_mapa(region, comunas):
             font=dict(size=12, color='white'),  # Tamaño y color del texto de la leyenda
             orientation="v"  # Leyenda en orientación vertical
         ),
-        height = 600,
-        width = 500
+        #height = 600,
+        #width = 500
     )
 
     return fig
@@ -266,8 +266,8 @@ def grafico_asistencia(asistencia):
     # Usar la escala de colores Blues
     fig.update_layout(
         sunburstcolorway=px.colors.sequential.Blues,  # Asignar la escala de colores Blues
-        width=600,
-        height=600,
+        #width=600,
+        #height=600,
         title_x=0.5,
         title_y=0.95,
         margin=dict(t=40),
@@ -359,8 +359,8 @@ def grafico_gastos_mensuales(gastos_operacionales, personal_apoyo):
             tickfont=dict(color='white'),
             gridcolor='black'
         ),
-        width=800,
-        height=400,
+        #width=800,
+        #height=400,
         plot_bgcolor='#08646e',
         paper_bgcolor='#08646e',
         legend=dict(
@@ -923,8 +923,48 @@ def grafico_asistencia_gasto_total(engine):
                 gridcolor="black",
                 tickformat="$,.0f"     # Formato del eje Y como moneda
             ),
-            width=800,                 # Ancho del gráfico
-            height=600                 # Alto del gráfico
+            #width=800,                 # Ancho del gráfico
+            #height=600                 # Alto del gráfico
         )
 
         return fig
+
+#####################################################################################
+
+def grafico_vacio(mensaje):
+    """Devuelve un gráfico vacío con un mensaje estilizado."""
+    fig = go.Figure()
+
+    # Añadir el mensaje en el centro
+    fig.add_annotation(
+        text=mensaje,
+        x=0.5, y=0.5,
+        xref="paper", yref="paper",
+        showarrow=False,
+        font=dict(size=22, color='white'),
+        align='center'
+    )
+
+    # Personalizar el diseño para que coincida con los otros gráficos
+    fig.update_layout(
+        paper_bgcolor='#08646e',  # Fondo general
+        plot_bgcolor='#08646e',   # Fondo de la gráfica
+        font=dict(color='white'),  # Color del texto
+        title=dict(
+            text="Sin datos disponibles",  # Título genérico
+            x=0.5,
+            xanchor='center',
+            font=dict(size=22, color='white')
+        ),
+        xaxis=dict(
+            visible=False,  # Ocultar eje X
+            showgrid=False
+        ),
+        yaxis=dict(
+            visible=False,  # Ocultar eje Y
+            showgrid=False
+        ),
+        margin=dict(l=20, r=20, t=50, b=20)  # Márgenes ajustados
+    )
+
+    return fig
