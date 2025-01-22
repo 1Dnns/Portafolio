@@ -8,6 +8,7 @@ from django.conf import settings
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from plotly.colors import sequential
 
 
 ###########################################################################
@@ -38,6 +39,21 @@ def formatear_pesos(valor):
     """Formatea valores numéricos a formato de pesos chilenos."""
     return "$ {:,.0f}".format(valor).replace(",", ".")
 
+# Función para agrupar categorías pequeñas en "Otros"
+def agrupar_categorias(data, valor_col, nombre_col, porcentaje=0.1):
+    total = data[valor_col].sum()
+    threshold = total * porcentaje  # 10% del total
+    # Separar categorías importantes y las que van en "Otros"
+    importantes = data[data[valor_col] >= threshold]
+    otros = data[data[valor_col] < threshold]
+    # Agregar la categoría "Otros" si corresponde
+    if not otros.empty:
+        otros_sum = otros[valor_col].sum()
+        importantes = pd.concat([
+            importantes,
+            pd.DataFrame({nombre_col: ["Otros"], valor_col: [otros_sum]})
+        ])
+    return importantes
 
 ###########################################################################
 ###########################################################################
@@ -525,323 +541,6 @@ def grafico_personal_apoyo(personal_apoyo, mes=None, año=None):
     
     # Retornar gráfico
     return fig
-
-################## Grafico Global Gastos Operacionales ################################
-#funcion auxiliar
-def grafico_desglose_otros(data):
-    data_copy = data.copy()
-    data_copy['Montos Pesos'] = data_copy['Suma_Gastos_O'].apply(lambda x: f"${x:,.0f}".replace(",", "."))
-    data_copy['Porcentaje'] = (data_copy['Suma_Gastos_O']/sum(data_copy['Suma_Gastos_O']) * 100).round(2)
-    
-    titulo = "Distribución de los Gastos Operacionales."
-
-    # Crear el gráfico
-    fig = px.bar(
-        data_copy,
-        x="Suma_Gastos_O",
-        y="Gastos",
-        orientation='h',
-        color="Porcentaje",
-        color_continuous_scale=px.colors.sequential.Blues,
-        title=titulo,
-        hover_data={"Suma_Gastos_O": False, "Montos Pesos": True, "Porcentaje": True}
-    )
-
-    # Personalizar diseño
-    fig.update_layout(
-        paper_bgcolor='#08646e',
-        plot_bgcolor='#08646e',
-        font=dict(color='white'),
-        title=dict(
-            text=titulo,     # Título
-            x=0.5,           # Centrar título (0.5 = centro)
-            xanchor='center', # Anclar el título al centro
-            font=dict(            # Configuración de fuente del título
-                size=22,          # Tamaño de la letra (ajústalo según necesidad)
-                color='white',    # Color del texto
-            )
-        ),
-        xaxis=dict(
-            showgrid=True,
-            gridcolor='#1a828e',
-            gridwidth=0.5
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridwidth=0.5,
-            gridcolor='#1a828e'
-        ),
-        xaxis_title="Monto [$]",
-        yaxis_title="Gastos",
-        annotations=[
-            dict(
-                text="Desglose de los gastos de la categoría 'Otros'.",
-                x=0.9,
-                y=1.15,  # Ajustar la posición vertical según sea necesario
-                xref="paper",
-                yref="paper",
-                showarrow=False,
-                font=dict(size=18, color="white"),
-                align="center"
-            )
-        ]
-    )
-
-    # Personalizar hover
-    fig.update_traces(
-        hovertemplate='<b>%{y}</b><br>Monto: %{customdata[0]}<br>Porcentaje: %{customdata[1]}%<extra></extra>',
-        customdata=data_copy[['Montos Pesos', 'Porcentaje']].values
-    )
-    
-    return fig
-
-#funcion principal
-
-def grafico_global_gastos_operacionales(engine, desglose=False):
-    ##################### Obtención y corrección de los datos ####################
-    query = '''
-            SELECT Gastos, SUM(Montos) AS Suma_Gastos_O
-            FROM Gastos_Operacionales
-            GROUP BY Gastos
-            '''
-
-    ALL_G_O_1 = pd.read_sql(query, engine)
-
-    nombres_cortos = [
-        'GASTOS PERSONAL APOYO',
-        'ACTIVIDADES CON LA COMUNIDAD',
-        'EQUIPAMIENTO OFICINA',
-        'MANTENCION OFICINA',
-        'REPARACIONES DEL INMUEBLE',
-        'HABILITACION SEDES PARLAMENTARIA',
-        'SERVICIO DE ALMACENAMIENTO',
-        'MANTENCION OFICINA MÓVIL'
-    ]
-
-    nombres_largos = [
-        'TRASPASO DESDE GASTOS OPERACIONALES A ASIGNACIÓN PERSONAL DE APOYO  ',
-        'ACTIVIDADES DESTINADAS A LA INTERACCIÓN CON LA COMUNIDAD  ',
-        'EQUIPAMIENTO OFICINA PARLAMENTARIA  ',
-        'GASTOS DE MANTENCIÓN OFICINA PARLAMENTARIA (INMUEBLE)  ',
-        'REPARACIONES LOCATIVAS DEL INMUEBLE  ',
-        'HABILITACIÓN DE SEDES PARLAMENTARIAS (CON AUTORIZACIÓN DE CRAP)  ',
-        'CONTRATACIÓN SERVICIO DE ALMACENAMIENTO  ',
-        'MANTENCION Y REPARACIÓN DE OFICINA MÓVIL  '
-    ]
-
-    # Cambiar valores con expresiones regulares para TELEFONÍA y EQUIPAMIENTO
-    ALL_G_O_1['Gastos'] = ALL_G_O_1['Gastos'].str.replace(
-        r'TELEFONÍA \(\*\*.*?\)', 'TELEFONÍA (MONTO AJUSTADO)', regex=True)
-
-    ALL_G_O_1['Gastos'] = ALL_G_O_1['Gastos'].str.replace(
-        r'EQUIPAMIENTO OFICINA PARLAMENTARIA \(\*\*.*?\)', 'EQUIPAMIENTO OFICINA (MONTO ACT.)', regex=True)
-
-    ALL_G_O_1['Gastos'] = ALL_G_O_1['Gastos'].str.replace(
-        r'DIFUSIÓN \(\*\*.*?\)', 'DIFUSIÓN (MONTO AJUSTADO)', regex=True)
-
-    # Cambiar nombres largos por cortos
-    for largo, corto in zip(nombres_largos, nombres_cortos):
-        ALL_G_O_1['Gastos'] = ALL_G_O_1['Gastos'].replace(largo, corto)
-
-    ALL_G_O_1 = ALL_G_O_1[ALL_G_O_1['Suma_Gastos_O'] != 0]  # Filtrar valores diferentes de cero
-    ALL_G_O_1 = ALL_G_O_1.sort_values('Suma_Gastos_O', ascending=True)  # Ordenar por Suma_Gastos_O
-    ALL_G_O_1['Montos Pesos'] = ALL_G_O_1['Suma_Gastos_O'].apply(lambda x: f"${x:,.0f}".replace(',', '.'))  # Formato pesos
-    
-    titulo = "Distribución de los Gastos Operacionales"
-    ############################# Lógica de desglose ################################
-    if desglose:
-        otros_data = ALL_G_O_1.loc[~ALL_G_O_1.index.isin(ALL_G_O_1.nlargest(10, 'Suma_Gastos_O').index)]
-        return grafico_desglose_otros(otros_data)
-
-    ############################# Gráfico principal ################################
-    # Calcular el Top 10 y agrupar el resto como "Otros"
-    top_10 = ALL_G_O_1.nlargest(10, 'Suma_Gastos_O')
-    otros = pd.DataFrame({
-        'Gastos': ['Otros'],
-        'Suma_Gastos_O': [ALL_G_O_1.loc[~ALL_G_O_1.index.isin(top_10.index), 'Suma_Gastos_O'].sum()],
-        'Montos Pesos': [f"${ALL_G_O_1.loc[~ALL_G_O_1.index.isin(top_10.index), 'Suma_Gastos_O'].sum():,.0f}".replace(",", ".")]
-    })
-    df_filtrado = pd.concat([top_10, otros])
-
-    # Calcular porcentaje de cada categoría
-    total_gastos = df_filtrado['Suma_Gastos_O'].sum()
-    df_filtrado['Porcentaje'] = (df_filtrado['Suma_Gastos_O'] / total_gastos * 100).round(2)
-
-    # Crear el gráfico
-    fig = px.bar(
-        df_filtrado,
-        x="Suma_Gastos_O",
-        y="Gastos",
-        orientation='h',
-        color="Porcentaje",  # Usar el porcentaje para la barra de calor
-        color_continuous_scale=px.colors.sequential.Blues,  # Escala de colores
-        title=titulo,
-        hover_data={"Suma_Gastos_O": False, "Montos Pesos": True, "Porcentaje": True}
-    )
-
-    # Personalizar diseño
-    fig.update_layout(
-        paper_bgcolor='#08646e',
-        plot_bgcolor='#08646e',
-        font=dict(color='white'),
-        title=dict(
-            text=titulo,     # Título
-            x=0.5,           # Centrar título (0.5 = centro)
-            xanchor='center', # Anclar el título al centro
-            font=dict(            # Configuración de fuente del título
-                size=22,          # Tamaño de la letra (ajústalo según necesidad)
-                color='white',    # Color del texto
-            )
-        ),
-        xaxis=dict(
-            showgrid=True,
-            gridcolor='#1a828e',
-            gridwidth=0.5
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridwidth=0.5,
-            gridcolor='#1a828e'
-        ),
-        xaxis_title="Monto [$]",
-        yaxis_title="Gastos",
-        coloraxis_colorbar=dict(
-            title="Porcentaje",
-            tickformat=".1f%"
-        )
-    )
-
-    # Personalizar hover
-    fig.update_traces(
-        hovertemplate='<b>%{y}</b><br>Monto: %{customdata[0]}<br>Porcentaje: %{customdata[1]}%<extra></extra>',
-        customdata=df_filtrado[['Montos Pesos', 'Porcentaje']].values
-    )
-
-    return fig
-
-######################## Grafico Global Personal Apoyo ########################
-def grafico_global_personal_apoyo(engine, mostrar_otros=False):
-    
-    # Consulta SQL
-    query = '''
-        SELECT Cargo, SUM(Sueldo) AS Suma_P_A
-        FROM Personal_Apoyo
-        GROUP BY Cargo
-    '''
-    ALL_P_A_1 = pd.read_sql(query, engine)
-
-    # Normalización de datos
-    ALL_P_A_1['Cargo'] = ALL_P_A_1['Cargo'].str.replace(
-        r'^(Asesor[iíÍ][aA]|ASESOR[IÍ][AÁ]).*', 'Asesor', regex=True
-    )
-    ALL_P_A_1['Cargo'] = ALL_P_A_1['Cargo'].str.strip().str.replace(r'\s+', ' ', regex=True)
-    ALL_P_A_1['Cargo'] = ALL_P_A_1['Cargo'].apply(normalizar_cargo)
-
-
-    # Separar en Asesor y Otros
-    asesor = ALL_P_A_1[ALL_P_A_1['Cargo'] == 'Asesor']
-    no_asesor = ALL_P_A_1[ALL_P_A_1['Cargo'] != 'Asesor']
-
-    # Datos del primer gráfico
-    df_1 = pd.DataFrame({
-        'Categoria': ['Asesor', 'Otros'],
-        'Suma_Sueldo': [asesor['Suma_P_A'].sum(), no_asesor['Suma_P_A'].sum()],
-        'Cantidad': [asesor['Cargo'].value_counts().sum(), no_asesor['Cargo'].value_counts().sum()]
-    })
-
-    # Gráfico 1: Asesor vs Otros
-    fig_1 = go.Figure()
-    fig_1.add_trace(go.Pie(
-        labels=df_1['Categoria'],
-        values=df_1['Cantidad'],
-        marker=dict(colors=px.colors.sequential.Blues[3:]),  # Colores más intensos
-        hovertemplate=(
-            "<b>%{label}</b><br>"
-            "Cantidad: %{value}<br>"
-            "Total Gasto: %{customdata}<extra></extra>"
-        ),
-        textinfo="label+percent",
-        customdata=df_1['Suma_Sueldo'].apply(formatear_pesos),
-        hole=0.4,
-        hoverlabel=dict(bgcolor="white", font_size=12)
-    ))
-
-    fig_1.update_layout(
-        title=dict(
-                text="Distribución de Cargos del Personal de Apoyo",
-                x=0.50,  # Centrar título
-                font=dict(size=22, color="white")
-            ),
-        legend=dict(
-                x=0.9,  # Mueve la leyenda al centro horizontalmente
-                y=0.5,  # Coloca la leyenda un poco más abajo (ajustar según tu preferencia)
-                #yanchor="center",  # Ancla la leyenda desde su centro
-                orientation="v",  # Leyenda en orientación horizontal
-                font=dict(size=14, color="white")  # Personalización de fuente
-            ),
-        paper_bgcolor="#08646e",
-        font=dict(color="white", size = 14)
-    )
-
-
-    # Gráfico 2: Desglose de 'Otros'
-    if mostrar_otros:
-        data = ALL_P_A_1[ALL_P_A_1['Cargo'] != 'Asesor']
-        grouped = data.groupby('Cargo').agg(
-            cantidad_cargo=('Cargo', 'count'),            # Contar cantidad de cargos
-            suma_P_A=('Suma_P_A', 'sum')                 # Sumar Suma_P_A
-        ).reset_index()
-        # Calculamos el porcentaje respecto al total de cantidad de cargos
-        total_cargos = grouped['cantidad_cargo'].sum()
-        #grouped['Porcentaje'] = (grouped['cantidad_cargo'] / total_cargos) * 100
-
-        fig_2 = go.Figure()
-        fig_2.add_trace(go.Pie(
-            labels=grouped['Cargo'],
-            values=grouped['cantidad_cargo'],
-            marker=dict(colors=px.colors.sequential.Blues[3:]),
-            hovertemplate=(
-                "<b>%{label}</b>"
-                "<br>Cantidad: %{value}</br>"
-                "Total Gasto: %{customdata[0]}<extra></extra>"
-            ),
-            textinfo="label+percent",
-            customdata=grouped['suma_P_A'].apply(formatear_pesos),
-            hole=0.4,
-            hoverlabel=dict(bgcolor="white", font_size=12)
-        ))
-
-        fig_2.update_layout(
-            title=dict(
-                text="Distribución de Cargos del Personal de Apoyo",
-                x=0.50,  # Centrar título
-                font=dict(size=22, color="white")
-            ),
-            annotations=[
-                dict(
-                    text="Desglose de los Cargos en la Categoría 'Otros'",
-                    showarrow=False,
-                    x=0.66,
-                    y=1.15,
-                    xref='paper',
-                    yref='paper',
-                    font=dict(size=18, color="white")
-                )
-            ],
-            legend=dict(
-                x=1.2,  # Mueve la leyenda al centro horizontalmente
-                y=0.5,  # Coloca la leyenda un poco más abajo (ajustar según tu preferencia)
-                #yanchor="center",  # Ancla la leyenda desde su centro
-                orientation="v",  # Leyenda en orientación horizontal
-                font=dict(size=14, color="white")  # Personalización de fuente
-            ),
-            paper_bgcolor="#08646e",
-            font=dict(color="white")
-        )
-        return fig_2.show()
-    
-    else:
-        return fig_1.show()
     
 ########################## Grafico Principal ################################
 
@@ -968,3 +667,190 @@ def grafico_vacio(mensaje):
     )
 
     return fig
+
+def grafico_vacio_inicial():
+    """Devuelve un gráfico vacío predeterminado."""
+    fig = go.Figure()
+    fig.update_layout(
+        title=dict(text="Cargando datos...", x=0.5, font=dict(size=18)),
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        paper_bgcolor='#08646e',  # Fondo del gráfico
+        font=dict(color='white')  # Color del texto
+    )
+    return fig
+
+#####################################################################################
+def grafico_global_gastos(engine):
+    ################### consulta a la base de datos ####################
+    query = '''
+        SELECT *
+        FROM Personal_Apoyo
+        '''
+    personal_apoyo = pd.read_sql(query, engine)
+
+    query = '''
+            SELECT *
+            FROM Gastos_Operacionales
+            '''
+    gastos_operacionales = pd.read_sql(query, engine)
+
+    ################### tratamiento a los datos ########################
+    personal_apoyo['Cargo'] = personal_apoyo['Cargo'].str.replace(
+        r'^(Asesor[iíÍ][aA]|ASESOR[IÍ][AÁ]).*', 'Asesor', regex=True)
+    personal_apoyo['Cargo'] = personal_apoyo['Cargo'].str.strip().str.replace(r'\s+', ' ', regex=True)
+    personal_apoyo['Cargo'] = personal_apoyo['Cargo'].apply(normalizar_cargo)
+    sueldosXCategoria = personal_apoyo.groupby('Cargo', as_index=False)['Sueldo'].sum()
+
+    #corecciones para los nombres para los graficos
+    nombres_cortos = ['GASTOS PERSONAL APOYO',
+                    'ACTIVIDADES CON LA COMUNIDAD',
+                    'EQUIPAMIENTO OFICINA',
+                    'MANTENCION OFICINA',
+                    'REPARACIONES DEL INMUEBLE',
+                    'HABILITACION SEDES PARLAMENTARIA',
+                    'SERVICIO DE ALMACENAMIENTO',
+                    'MANTENCION OFICINA MÓVIL']
+
+    nombres_largos = ['TRASPASO DESDE GASTOS OPERACIONALES A ASIGNACIÓN PERSONAL DE APOYO  ',
+                        'ACTIVIDADES DESTINADAS A LA INTERACCIÓN CON LA COMUNIDAD  ',
+                        'EQUIPAMIENTO OFICINA PARLAMENTARIA  ',
+                        'GASTOS DE MANTENCIÓN OFICINA PARLAMENTARIA (INMUEBLE)  ',
+                        'REPARACIONES LOCATIVAS DEL INMUEBLE  ',
+                        'HABILITACIÓN DE SEDES PARLAMENTARIAS (CON AUTORIZACIÓN DE CRAP)  ',
+                        'CONTRATACIÓN SERVICIO DE ALMACENAMIENTO  ',
+                        'MANTENCION Y REPARACIÓN DE OFICINA MÓVIL  ',
+                        ]
+
+    reemplazos = dict(zip(nombres_largos, nombres_cortos))
+    gastos_operacionales.loc[:, 'Gastos'] = gastos_operacionales['Gastos'].replace(reemplazos)
+    # Cambiar valores con expresiones regulares para TELEFONÍA y EQUIPAMIENTO
+    gastos_operacionales['Gastos'] = gastos_operacionales['Gastos'].str.replace(
+            r'TELEFONÍA \(\*\*.*?\)', 'TELEFONÍA (MONTO AJUSTADO)', regex=True)
+
+    gastos_operacionales['Gastos'] = gastos_operacionales['Gastos'].str.replace(
+            r'EQUIPAMIENTO OFICINA PARLAMENTARIA \(\*\*.*?\)', 'EQUIPAMIENTO OFICINA (MONTO ACT.)', regex=True)
+
+    gastos_operacionales['Gastos'] = gastos_operacionales['Gastos'].str.replace(
+            r'DIFUSIÓN \(\*\*.*?\)', 'DIFUSIÓN (MONTO AJUSTADO)', regex=True)
+    montosXgastos = gastos_operacionales.groupby('Gastos', as_index=False)['Montos'].sum()
+
+    sueldosXCategoria = agrupar_categorias(sueldosXCategoria, "Sueldo", "Cargo")
+    montosXgastos = agrupar_categorias(montosXgastos, "Montos", "Gastos")
+
+    montosXgastos = montosXgastos.sort_values(by='Montos', ascending=False)
+    sueldosXCategoria = sueldosXCategoria.sort_values(by='Sueldo', ascending=False)
+    ############################### Grafico ############################
+    colors = sequential.Blues
+
+    # Crear gráfico de barras apiladas con estilo personalizado
+    fig = go.Figure()
+
+    # Calcular totales
+    total_sueldos = sueldosXCategoria["Sueldo"].sum()
+    total_gastos = montosXgastos["Montos"].sum()
+
+    # Asignar colores uniformes para cada categoría
+    #cargo_colors = colors[:len(sueldosXCategoria)]
+    cargo_colors = colors[:3]
+
+    for index, row in sueldosXCategoria.iterrows():
+        porcentaje = (row["Sueldo"] / total_sueldos) * 100
+        fig.add_trace(go.Bar(
+            name=row["Cargo"],
+            x=["Sueldos en Personal Apoyo"],
+            y=[row["Sueldo"]],
+            text=row["Cargo"],
+            hovertemplate=(
+                f"<b>Monto:</b> $%{{y:,.0f}}<br>"
+                f"<b>Porcentaje:</b> {porcentaje:.2f}%<extra></extra>"
+            ),
+            textposition="inside",
+            marker=dict(
+                color=cargo_colors[index % len(cargo_colors)],
+                line=dict(color="black", width=0.2)  # Bordes negros entre categorías
+            )
+        ))
+
+    #gasto_colors = colors[:len(montosXgastos)]
+    gasto_colors = colors[:3]
+
+
+    for index, row in montosXgastos.iterrows():
+        porcentaje = (row["Montos"] / total_gastos) * 100
+        fig.add_trace(go.Bar(
+            name=row["Gastos"],
+            x=["Gastos Operacionales"],
+            y=[row["Montos"]],
+            text=row["Gastos"],
+            hovertemplate=(
+                f"<b>Monto:</b> $%{{y:,.0f}}<br>"
+                f"<b>Porcentaje:</b> {porcentaje:.2f}%<extra></extra>"
+            ),
+            textposition="inside",
+            marker=dict(
+                color=gasto_colors[index % len(gasto_colors)],
+                line=dict(color="black", width=0.2)  # Bordes negros entre categorías
+            )
+        ))
+
+    # Agregar los totales como texto encima de las barras
+    fig.add_trace(go.Scatter(
+        x=["Sueldos en Personal Apoyo"],
+        y=[total_sueldos],
+        mode="text",
+        text=[f"Total: ${total_sueldos:,.0f}"],
+        textposition="top center",
+        textfont=dict(
+            color="white",  
+            size=12  
+        ),
+        showlegend=False
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=["Gastos Operacionales"],
+        y=[total_gastos],
+        mode="text",
+        text=[f"Total: ${total_gastos:,.0f}"],
+        textposition="top center",
+        textfont=dict(
+            color="white",  
+            size=12  
+        ),
+        showlegend=False
+    ))
+
+    # Configurar el diseño del gráfico
+    fig.update_layout(
+        title=dict(
+            text="Distribución de los Gastos de los Diputados",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=22, color='white')
+        ),
+        barmode="stack",
+        xaxis=dict(
+            title="Categorías",
+            titlefont=dict(color="white"),
+            tickfont=dict(color="white"),
+            showgrid=True,
+            gridcolor='#1a828e',
+        ),
+        yaxis=dict(
+            title="Monto (CLP)",
+            titlefont=dict(color="white"),
+            tickfont=dict(color="white"),
+            showgrid=True,
+            gridcolor='#1a828e',
+        ),
+        showlegend=False,
+        paper_bgcolor='#08646e',
+        plot_bgcolor='#08646e',
+        width=850,                 # Ancho del gráfico
+        height=500
+    )
+
+    # Mostrar el gráfico
+    return fig
+

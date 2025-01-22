@@ -4,9 +4,10 @@ import plotly.graph_objects as go
 from .utils.funciones_graficos import (
     conexion_DB, datos, grafico_mapa, grafico_asistencia, 
     grafico_gastos_mensuales, grafico_asistencia_gasto_total, 
-    grafico_global_gastos_operacionales, grafico_gasto_operacional, 
-    grafico_personal_apoyo, grafico_vacio
+    grafico_gasto_operacional, grafico_vacio_inicial,
+    grafico_personal_apoyo, grafico_vacio, grafico_global_gastos
 )
+
 
 ######################## Conexión a la base de datos #####################
 engine, df_diputados = conexion_DB()
@@ -78,16 +79,23 @@ app.layout = html.Div([
     # Gráficos generales (antes de seleccionar un diputado)
     html.Div([
         html.H3("Gráficos Generales", style={'textAlign': 'center', 'color': '#ffffff'}),
-        dcc.Graph(id='grafico-asistencia-gasto-total',
-                  config={'displayModeBar': False, 'responsive': True},
-                  style={'border': '2px solid #ffffff','margin': '20px auto', 'height': '500px', 'width': '50%'}),
-        dcc.Graph(id='grafico-global-gastos-operacionales',
-                  config={'displayModeBar': False, 'responsive': True},
-                  style={'border': '2px solid #ffffff','margin': '20px auto', 'height': '400px', 'width': '90%'}),
+        html.Div([
+            dcc.Graph(
+                id='grafico-asistencia-gasto-total',
+                figure=grafico_vacio_inicial(),  # Gráfico vacío inicial
+                config={'displayModeBar': False, 'responsive': True},
+                style={'border': '2px solid #ffffff', 'height': '500px', 'width': '48%', 'margin': '0 10px'}
+            ),
+            dcc.Graph(
+                id='grafico-global-gastos',
+                figure=grafico_vacio_inicial(),  # Gráfico vacío inicial
+                config={'displayModeBar': False, 'responsive': True},
+                style={'border': '2px solid #ffffff', 'height': '500px', 'width': '48%', 'margin': '0 10px'}
+            )
+        ], style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center'}),
     ], id='graficos-generales', style={'display': 'block'}),
 
     # Gráficos específicos del diputado seleccionado
-
     html.Div([
         html.H3("Gráficos del Diputado Seleccionado", style={'textAlign': 'center', 'color': '#ffffff'}),
 
@@ -152,7 +160,7 @@ html.Div([
 @app.callback(
     [
         Output('grafico-asistencia-gasto-total', 'figure'),
-        Output('grafico-global-gastos-operacionales', 'figure'),
+        Output('grafico-global-gastos', 'figure'),
         Output('grafico-mapa', 'figure'),
         Output('grafico-asistencia', 'figure'),
         Output('grafico-gastos-mensuales', 'figure'),
@@ -172,7 +180,7 @@ def actualizar_graficos(diputado_seleccionado, año, mes):
         # Gráficos generales
         return (
             grafico_asistencia_gasto_total(engine),
-            grafico_global_gastos_operacionales(engine, desglose=True),
+            grafico_global_gastos(engine),
             no_update, no_update, no_update, no_update, no_update,
             {'display': 'block'},  # Mostrar gráficos generales
             {'display': 'none'},   # Ocultar gráficos del diputado
