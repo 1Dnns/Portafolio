@@ -629,7 +629,6 @@ def grafico_asistencia_gasto_total(engine):
         return fig
 
 #####################################################################################
-
 def grafico_vacio(mensaje):
     """Devuelve un gráfico vacío con un mensaje estilizado."""
     fig = go.Figure()
@@ -667,6 +666,7 @@ def grafico_vacio(mensaje):
     )
 
     return fig
+
 
 def grafico_vacio_inicial():
     """Devuelve un gráfico vacío predeterminado."""

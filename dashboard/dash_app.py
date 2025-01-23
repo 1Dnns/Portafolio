@@ -99,7 +99,26 @@ app.layout = html.Div([
     html.Div([
         html.H3("Gráficos del Diputado Seleccionado", style={'textAlign': 'center', 'color': '#ffffff'}),
 
-        # Primera fila: Mapa y Gastos Mensuales
+        # Primera fila: Asistencia, Gastos Operacionales y Personal de Apoyo
+        html.Div([
+            html.Div(
+                dcc.Graph(id='grafico-asistencia', figure=grafico_vacio_inicial(), config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
+                    'margin': '10px'}
+            ),
+            html.Div(
+                dcc.Graph(id='grafico-personal-apoyo', figure=grafico_vacio_inicial(), config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
+                    'margin': '10px'}
+            ),
+            html.Div(
+                dcc.Graph(id='grafico-gasto-operacional', figure=grafico_vacio_inicial(),  config={'displayModeBar': False, 'responsive': True}),
+                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
+                    'margin': '10px'}
+            ),
+        ], style={'display': 'flex', 'justifyContent': 'space-between'}),
+
+        # Segunda fila: Mapa y Gastos Mensuales
         html.Div([
             html.Div(
                 dcc.Graph(id='grafico-mapa', config={'displayModeBar': False, 'responsive': True}),
@@ -113,24 +132,6 @@ app.layout = html.Div([
             ),
         ], style={'display': 'flex', 'justifyContent': 'space-between'}),
 
-        # Segunda fila: Asistencia, Gastos Operacionales y Personal de Apoyo
-        html.Div([
-            html.Div(
-                dcc.Graph(id='grafico-asistencia', config={'displayModeBar': False, 'responsive': True}),
-                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
-                    'margin': '10px'}
-            ),
-            html.Div(
-                dcc.Graph(id='grafico-gasto-operacional', config={'displayModeBar': False, 'responsive': True}),
-                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
-                    'margin': '10px'}
-            ),
-            html.Div(
-                dcc.Graph(id='grafico-personal-apoyo', config={'displayModeBar': False, 'responsive': True}),
-                style={'width': '33%', 'display': 'inline-block', 'border': '2px solid #ffffff', 
-                    'margin': '10px'}
-            ),
-        ], style={'display': 'flex', 'justifyContent': 'space-between'}),
     ], id='graficos-diputado', style={'display': 'none'}),
 
 # Sección de Comentarios
@@ -161,11 +162,11 @@ html.Div([
     [
         Output('grafico-asistencia-gasto-total', 'figure'),
         Output('grafico-global-gastos', 'figure'),
-        Output('grafico-mapa', 'figure'),
         Output('grafico-asistencia', 'figure'),
-        Output('grafico-gastos-mensuales', 'figure'),
         Output('grafico-gasto-operacional', 'figure'),
         Output('grafico-personal-apoyo', 'figure'),
+        Output('grafico-mapa', 'figure'),
+        Output('grafico-gastos-mensuales', 'figure'),
         Output('graficos-generales', 'style'),
         Output('graficos-diputado', 'style'),
         Output('store-diputado', 'data'),
@@ -199,48 +200,44 @@ def actualizar_graficos(diputado_seleccionado, año, mes):
         return True
 
     # graficos generales del diputado
-    if año is None or mes is None:
+    if año is not None and mes is not None:
+        grafico_gasto_op = (
+            grafico_gasto_operacional(gastos_operacionales, mes, año)
+            if validar_datos(gastos_operacionales, mes, año)
+            else grafico_vacio("No hay datos disponibles <br> de gastos operacionales <br> para este mes.")
+        )
+
+        grafico_personal_ap = (
+            grafico_personal_apoyo(personal_apoyo, mes, año)
+            if validar_datos(personal_apoyo, mes, año)
+            else grafico_vacio("No hay datos disponibles <br> de personal de apoyo <br> para este mes.")
+        )
+
         return (
-        no_update,  # No actualizar gráficos generales
-        no_update,  # No actualizar gráficos generales
-        grafico_mapa(region, comunas),
+            no_update,
+            no_update,
+            grafico_asistencia(asistencia),
+            grafico_gasto_op,
+            grafico_personal_ap,
+            grafico_mapa(region, comunas),
+            grafico_gastos_mensuales(gastos_operacionales, personal_apoyo),
+            {'display':'none'},
+            {'display':'inline'},
+            diputado_id,
+            {'display':'flex'}
+        )
+
+    return (
+        no_update,
+        no_update,
         grafico_asistencia(asistencia),
-        grafico_gastos_mensuales(gastos_operacionales, personal_apoyo),
         grafico_gasto_operacional(gastos_operacionales),
         grafico_personal_apoyo(personal_apoyo),
-        {'display': 'none'},  # Ocultar gráficos generales
-        {'display': 'inline'}, # Mostrar gráficos del diputado
-        diputado_id,
-        {'display': 'flex'} 
-    )    
-
-    # Validar datos por mes y año
-    grafico_gasto_op = (
-        grafico_gasto_operacional(gastos_operacionales, mes, año)
-        if validar_datos(gastos_operacionales, mes, año)
-        else grafico_vacio("No hay datos disponibles <br> de gastos operacionales <br> para este mes.")
-    )
-
-    grafico_personal_ap = (
-        grafico_personal_apoyo(personal_apoyo, mes, año)
-        if validar_datos(personal_apoyo, mes, año)
-        else grafico_vacio("No hay datos disponibles <br> de personal de apoyo <br> para este mes")
-    )
-
-    # Gráficos específicos del diputado
-    return (
-        no_update,  # No actualizar gráficos generales
-        no_update,  # No actualizar gráficos generales
         grafico_mapa(region, comunas),
-        grafico_asistencia(asistencia),
         grafico_gastos_mensuales(gastos_operacionales, personal_apoyo),
-        grafico_gasto_op,
-        grafico_personal_ap,
-        {'display': 'none'},  # Ocultar gráficos generales
-        {'display': 'inline'}, # Mostrar gráficos del diputado
+        {'display':'none'},
+        {'display':'inline'},
         diputado_id,
-        {'display': 'flex'}
+        {'display':'flex'}
     )
-
-
 
