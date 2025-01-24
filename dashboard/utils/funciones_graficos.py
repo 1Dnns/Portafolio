@@ -228,7 +228,7 @@ def grafico_mapa(region, comunas):
     # Ajustar el layout del gráfico
     fig.update_layout(
         title={
-            'text': "Mapa de las Comunas Asignadas",
+            'text': "Mapa de las Comunas Asignadas al Diputado",
             'y': 0.95,  # Ajusta la altura del título
             'x': 0.5,   # Centrar el título
             'xanchor': 'center',
@@ -270,7 +270,7 @@ def grafico_asistencia(asistencia):
         values=valores,
         branchvalues="total",  # Usar el valor total para calcular porcentajes
         hover_data={"value": valores},  # Agregar los valores al hover
-        title="Asistencia y Ausencias"
+        title="Resumen de Asistencia y Ausencias en Sesiones"
     )
 
     # Personalizar el hovertemplate
@@ -356,7 +356,7 @@ def grafico_gastos_mensuales(gastos_operacionales, personal_apoyo):
 
     # Personalizar el layout
     fig.update_layout(
-        title={'text': 'Gastos Mensuales', 'x': 0.5, 'font': {'color': 'white', 'size': 22}},  # Centrar y cambiar color del título
+        title={'text': 'Evolución de los Gastos Mensuales', 'x': 0.5, 'font': {'color': 'white', 'size': 22}},  # Centrar y cambiar color del título
         xaxis_title='Fecha',
         yaxis_title='Monto [$]',
         xaxis=dict(
@@ -407,7 +407,7 @@ def grafico_gasto_operacional(gastos_operacionales, mes=None, año=None):
     else:
         # Usar los datos globales
         datos_filtrados = gastos_operacionales.groupby("Gastos")["Montos"].sum().reset_index()
-        titulo = "Distribución general de los Gastos Operacionales"
+        titulo = "Detalle de los Gastos Operacionales por Categoría"
     
     # Remover categorías con montos cero
     datos_filtrados = datos_filtrados[datos_filtrados['Montos'] != 0]
@@ -491,7 +491,7 @@ def grafico_personal_apoyo(personal_apoyo, mes=None, año=None):
 
         # Personalizar layout
         fig.update_layout(
-            title={'text': 'Distribución general de los Sueldos por Categoría', 'x': 0.5, 'font': {'color': 'white', 'size': 22}},
+            title={'text': 'Sueldo por Categoría de Cargo', 'x': 0.5, 'font': {'color': 'white', 'size': 22}},
             xaxis_title='Cargo',
             yaxis_title='Porcentaje',
             paper_bgcolor='#08646e',
@@ -607,7 +607,7 @@ def grafico_asistencia_gasto_total(engine):
 
         # Configurar el diseño y estética
         fig.update_layout(
-            title={'text': 'Relación entre Asistencia y Gasto Total de los Diputados', 
+            title={'text': 'Relación entre Puntaje de Asistencia y Gasto Total de los Diputados', 
                 'x': 0.5, 
                 'font': {'color': 'white', 'size': 22}},
             xaxis_title="Puntaje Asistencia",
@@ -824,7 +824,7 @@ def grafico_global_gastos(engine):
     # Configurar el diseño del gráfico
     fig.update_layout(
         title=dict(
-            text="Distribución de los Gastos de los Diputados",
+            text="Distribución de los Gastos por Categorías",
             x=0.5,
             xanchor="center",
             font=dict(size=22, color='white')
@@ -838,7 +838,7 @@ def grafico_global_gastos(engine):
             gridcolor='#1a828e',
         ),
         yaxis=dict(
-            title="Monto (CLP)",
+            title="Monto [$]",
             titlefont=dict(color="white"),
             tickfont=dict(color="white"),
             showgrid=True,

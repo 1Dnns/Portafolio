@@ -42,16 +42,28 @@ app = DjangoDash('Diputados')
 app.layout = html.Div([
     # Componente Store para mantener el ID del diputado seleccionado
     dcc.Store(id='store-diputado'),
-
+    
     # Título del Dashboard
     html.Div(
-        html.H1("Dashboard de Diputados", style={'textAlign': 'center', 'color': '#ffffff'}),
+        html.H1("Exploración de la Asistencia y los Gastos de los Diputados de Chile", style={'textAlign': 'center', 'color': '#ffffff'}),
         style={'backgroundColor': '#08646e', 'padding': '20px'}
     ),
 
+        ##{{
+    # Cuadro explicativo
+    html.Div([
+        html.P(
+            "Este dashboard permite explorar la asistencia y los gastos de los Diputados de Chile. "
+            "Utilizando datos públicos de la Cámara de Diputados, puede visualizarse el desempeño "
+            "de cada diputado en términos de asistencia, gastos operativos y personal de apoyo.",
+            style={'color': '#ffffff', 'fontSize': '16px', 'textAlign': 'center', 'margin': '10px auto'},
+        )
+    ], style={'backgroundColor': '#08646e', 'padding': '20px', 'marginBottom': '20px', 'borderRadius': '5px'}),
+    ##}}
+
     # Menú desplegable para seleccionar un diputado
     html.Div([
-        html.H3("Seleccione un Diputado", style={'textAlign': 'center', 'color': '#ffffff'}),
+        html.H3("Seleccione un Diputado para Detallar la Información", style={'textAlign': 'center', 'color': '#ffffff'}),
         dcc.Dropdown(
             id='dropdown-diputado',
             options=dropdown_options,
@@ -78,7 +90,7 @@ app.layout = html.Div([
 
     # Gráficos generales (antes de seleccionar un diputado)
     html.Div([
-        html.H3("Gráficos Generales", style={'textAlign': 'center', 'color': '#ffffff'}),
+        html.H2("Perspectivas Generales", style={'textAlign': 'center', 'color': '#ffffff'}),
         html.Div([
             dcc.Graph(
                 id='grafico-asistencia-gasto-total',
@@ -97,7 +109,7 @@ app.layout = html.Div([
 
     # Gráficos específicos del diputado seleccionado
     html.Div([
-        html.H3("Gráficos del Diputado Seleccionado", style={'textAlign': 'center', 'color': '#ffffff'}),
+        html.H2("Análisis Detallado del Diputado Seleccionado", style={'textAlign': 'center', 'color': '#ffffff'}),
 
         # Primera fila: Asistencia, Gastos Operacionales y Personal de Apoyo
         html.Div([
@@ -123,12 +135,12 @@ app.layout = html.Div([
             html.Div(
                 dcc.Graph(id='grafico-mapa', config={'displayModeBar': False, 'responsive': True}),
                 style={'width': '30%', 'display': 'inline-block', 'verticalAlign': 'top', 
-                    'border': '2px solid #ffffff', 'margin': '10px', 'height': '600px'}
+                    'border': '2px solid #ffffff', 'margin': '10px', 'height': '510px'}
             ),
             html.Div(
                 dcc.Graph(id='grafico-gastos-mensuales', config={'displayModeBar': False, 'responsive': True}),
                 style={'width': '70%', 'display': 'inline-block', 'verticalAlign': 'top', 
-                    'border': '2px solid #ffffff', 'margin': '10px', 'height': '600px'}
+                    'border': '2px solid #ffffff', 'margin': '10px', 'height': '510px'}
             ),
         ], style={'display': 'flex', 'justifyContent': 'space-between'}),
 
@@ -138,10 +150,18 @@ app.layout = html.Div([
 html.Div([
         html.H3("Comentarios", style={'color': '#ffffff', 'textAlign': 'center'}),
         html.P(
-            "Fuente: Datos obtenidos de la Cámara de Diputados de Chile. "
-            "Considere que algunos datos pueden estar sujetos a cambios.",
+        "Los datos utilizados en este análisis fueron obtenidos desde el portal oficial de la Cámara de Diputados de Chile. "
+        "Esta información está disponible públicamente en cumplimiento con la Ley de Transparencia. "
+        "Para más detalles, puede consultar el sitio web oficial de la Cámara de Diputados.",
+        style={'color': '#ffffff', 'textAlign': 'center'}
+            ),
+        html.P(
+            "El puntaje de asistencia que se muestra en el gráfico refleja el compromiso de los diputados con sus deberes legislativos. "
+            "Este puntaje fue calculado considerando el total de sesiones realizadas, ajustado por las inasistencias. "
+            "Se distingue entre tres tipos de inasistencias: aquellas justificadas que no afectan, justificadas que sí rebajan, "
+            "y las no justificadas. Cada tipo tiene un impacto diferente, ponderado según su relevancia, para ofrecer un análisis más objetivo.",
             style={'color': '#ffffff', 'textAlign': 'center'}
-        )
+            )
     ], style={
         'backgroundColor': '#08646e',
         'padding': '10px',
