@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,27 +80,85 @@
 
     <!-- Proyectos -->
     <section class="container my-5">
-        <h2>Proyectos</h2>
-        <div class="row">
-            {% for proyecto in proyectos %}
+        <h2 class="text-center mb-4">Proyectos</h2>
+
+        <!-- Dashboards & Apps Interactivas -->
+        {% if dashboards_apps %}
+        <h3 class="mt-4">Dashboards & Apps Interactivas</h3>
+        <div class="row flex-nowrap overflow-auto">
+            {% for proyecto in dashboards_apps %}
             <div class="col-md-4">
-                <div class="card">
-                    {% if proyecto.imagen %}
-                    <img src="{{ proyecto.imagen.url }}" class="card-img-top" alt="{{ proyecto.titulo }}">
+                <div class="card h-100">
+                    {% if proyecto.image %}
+                    <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
                     {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">{{ proyecto.titulo }}</h5>
-                        <p class="card-text">{{ proyecto.descripcion|truncatechars:100 }}</p>
-                        {% if proyecto.categoria == 'dashboard' %}
-                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Ver Dashboard</a>
-                        {% else %}
-                        <a href="{{ proyecto.enlace }}" class="btn btn-secondary" target="_blank">Ver en GitHub</a>
+                        <h5 class="card-title">{{ proyecto.title }}</h5>
+                        <p class="card-text">{{ proyecto.description|truncatechars:100 }}</p>
+                        <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        {% if proyecto.link %}
+                        <a href="{{ proyecto.link }}" target="_blank" class="btn btn-primary">Ver Proyecto</a>
                         {% endif %}
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+        {% endif %}
+
+        <!-- Notebooks -->
+        {% if notebooks %}
+        <h3 class="mt-4">Notebooks</h3>
+        <div class="row flex-nowrap overflow-auto">
+            {% for proyecto in notebooks %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    {% if proyecto.image %}
+                    <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ proyecto.title }}</h5>
+                        <p class="card-text">{{ proyecto.description|truncatechars:100 }}</p>
+                        <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        {% if proyecto.link %}
+                        <a href="{{ proyecto.link }}" target="_blank" class="btn btn-primary">Ver Proyecto</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Web Development -->
+        {% if web_dev %}
+        <h3 class="mt-4">Web Development</h3>
+        <div class="row flex-nowrap overflow-auto">
+            {% for proyecto in web_dev %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    {% if proyecto.image %}
+                    <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ proyecto.title }}</h5>
+                        <p class="card-text">{{ proyecto.description|truncatechars:100 }}</p>
+                        <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        {% if proyecto.link %}
+                        <a href="{{ proyecto.link }}" target="_blank" class="btn btn-primary">Ver Proyecto</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </section>
 
     <!-- Contacto -->

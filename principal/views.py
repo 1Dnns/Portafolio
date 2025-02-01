@@ -11,6 +11,11 @@ def pagina_principal(request):
     experiencias = ExperienciaLaboral.objects.all()
     proyectos = Proyecto.objects.all()
 
+    # Filtrar proyectos por categoría
+    dashboards_apps = proyectos.filter(category='dashboards & Apps Interactivas')
+    notebooks = proyectos.filter(category='notebooks')
+    web_dev = proyectos.filter(category='web Development')
+
     context = {
         'portada': portada,
         'acerca_de': acerca_de,
@@ -18,5 +23,8 @@ def pagina_principal(request):
         'formacion': formacion,
         'experiencias': experiencias,
         'proyectos': proyectos,
+        'dashboards_apps': dashboards_apps,
+        'notebooks': notebooks,
+        'web_dev': web_dev
     }
     return render(request, 'principal/pagina_principal.html', context)

@@ -54,18 +54,29 @@ class ExperienciaLaboral(models.Model):
         return f"{self.cargo} en {self.empresa}"
 
 class Proyecto(models.Model):
-    CATEGORIAS = [
-        ('dashboard', 'Proyectos Interactivos'),
-        ('notebook', 'Notebooks en GitHub'),
+    CATEGORY_CHOICES = [
+        ('notebooks', 'Notebooks (GitHub)'),
+        ('dashboards & Apps Interactivas', 'Dashboards & Apps Interactivas'),
+        ('web Development', 'Web Development'),
     ]
-    titulo = models.CharField(max_length=100, default="Título por defecto")
-    descripcion = models.TextField(default="Descripción por defecto")
-    categoria = models.CharField(max_length=10, choices=CATEGORIAS, default='dashboard')
-    enlace = models.URLField(default="https://ejemplo.com")
-    imagen = models.ImageField(upload_to='proyectos/', blank=True) #se gurdara en la ruta MEDIA_ROOT/proyectos/
+
+    title = models.CharField(max_length=100, default='Titulo por defecto')  
+    description = models.TextField(default='Mensaje por defecto')          
+    skills = models.CharField(max_length=255, default='Habilidades por defecto')  # Habilidades clave separadas por comas
+    category = models.CharField(
+        max_length=40, 
+        choices=CATEGORY_CHOICES,
+        default='Otros'
+    ) 
+    image = models.ImageField(upload_to='projects/', blank=True, null=True)  
+    link = models.URLField(blank=True, null=True)                 
 
     def __str__(self):
-        return self.titulo
+        return self.title
+    
+    def get_skills_list(self):
+        """Convierte la cadena de habilidades en una lista."""
+        return self.skills.split(',')
 
 class Contacto(models.Model):
     nombre = models.CharField(max_length=100, default="Nombre por defecto")
