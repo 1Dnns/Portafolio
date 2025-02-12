@@ -86,25 +86,24 @@
 
         <!-- Dashboards & Apps Interactivas -->
         {% if dashboards_apps %}
-        <h3 class="mt-4">Dashboards & Apps Interactivas</h3>
+        <h3 class="mt-3 text-center">Dashboards & Apps Interactivas</h3>
         <div class="row flex-nowrap overflow-auto">
             {% for proyecto in dashboards_apps %}
-            <div class="col-md-4">
-                <div class="card h-100">
-                    {% if proyecto.image %}
-                    <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ proyecto.title }}</h5>
-                        <p class="card-text">{{ proyecto.description|truncatechars:100 }}</p>
-                        <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        {% if proyecto.link %}
-                        <a href="{{ proyecto.link }}" target="_blank" class="btn btn-primary">Ver Proyecto</a>
+            <div class="col-md-3">
+                <a href="{{ proyecto.link }}" target="_blank" class="card-link">
+                    <div class="card h-100">
+                        {% if proyecto.image %}
+                        <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
                         {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-center">{{ proyecto.title }}</h5>
+                            <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+                        </div>
+                        <div class="card-footer">    
+                            <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             {% endfor %}
         </div>
@@ -112,25 +111,24 @@
 
         <!-- Notebooks -->
         {% if notebooks %}
-        <h3 class="mt-4">Notebooks</h3>
+        <h3 class="mt-3 text-center">Notebooks</h3>
         <div class="row flex-nowrap overflow-auto">
             {% for proyecto in notebooks %}
-            <div class="col-md-4">
-                <div class="card h-100">
-                    {% if proyecto.image %}
-                    <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ proyecto.title }}</h5>
-                        <p class="card-text">{{ proyecto.description|truncatechars:100 }}</p>
-                        <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        {% if proyecto.link %}
-                        <a href="{{ proyecto.link }}" target="_blank" class="btn btn-primary">Ver Proyecto</a>
+            <div class="col-md-3">
+                <a href="{{ proyecto.link }}" target="_blank" class="card-link">
+                    <div class="card h-100">
+                        {% if proyecto.image %}
+                        <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
                         {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-center">{{ proyecto.title }}</h5>
+                            <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+                        </div>
+                        <div class="card-footer">
+                            <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             {% endfor %}
         </div>
@@ -138,26 +136,25 @@
 
         <!-- Web Development -->
         {% if web_dev %}
-        <h3 class="mt-4">Web Development</h3>
+        <h3 class="mt-3">Web Development</h3>
         <div class="row flex-nowrap overflow-auto">
             {% for proyecto in web_dev %}
-            <div class="col-md-4">
-                <div class="card h-100">
-                    {% if proyecto.image %}
-                    <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ proyecto.title }}</h5>
-                        <p class="card-text">{{ proyecto.description|truncatechars:100 }}</p>
-                        <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        {% if proyecto.link %}
-                        <a href="{{ proyecto.link }}" target="_blank" class="btn btn-primary">Ver Proyecto</a>
+            <div class="col-md-3">
+                <a href="{{ proyecto.link }}" target="_blank" class="card-link">
+                    <div class="card h-100">
+                        {% if proyecto.image %}
+                        <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
                         {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ proyecto.title }}</h5>
+                            <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+                        </div>
+                        <div class="card-footer">    
+                            <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </a>
+            </div>            
             {% endfor %}
         </div>
         {% endif %}

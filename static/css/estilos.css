@@ -1,60 +1,153 @@
-/* Estilo general de las cards */
+/* Estilos generales */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* --------------------------------------------------------------- */
+/* ------------------- Sección de proyectos ---------------------- */
+/* --------------------------------------------------------------- */
+/* Ajusta el margen inferior del título de la subsección */
+h3.mt-3.text-center {
+    margin-bottom: 1rem; /* Puedes ajustar este valor según tus necesidades */
+}
+
+
+.projects-section {
+    margin-top: 50px;
+    overflow-x: hidden;
+    position: relative;
+    padding: 20px 0;
+}
+
+.projects-container {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin; /* Scroll más fino */
+    scrollbar-color: #888 #f1f1f1; /* Color del scroll */
+}
+
+/* --------------------------------------------------------------- */
+/* --------------------------- Scrollbar ------------------------- */
+/* --------------------------------------------------------------- */
+
+
+/* Estilo para navegadores WebKit (Chrome, Safari, Edge) */
+.projects-container::-webkit-scrollbar {
+    width: 6px; /* Ancho del scroll */
+    height: 6px; /* Altura del scroll */
+}
+
+.projects-container::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color de fondo del track */
+    border-radius: 10px;
+}
+
+.projects-container::-webkit-scrollbar-thumb {
+    background: #888; /* Color del thumb */
+    border-radius: 10px;
+    transition: background 0.3s ease; /* Transición suave */
+}
+
+.projects-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color del thumb al pasar el mouse */
+}
+
+/* --------------------------------------------------------------- */
+/* --------------------------- CARDS ----------------------------- */
+/* --------------------------------------------------------------- */
+
+/* Estilos generales para las cards */
+.card-link {
+    text-decoration: none; /* Eliminamos el subrayado del enlace */
+    color: inherit; /* Heredamos el color del texto */
+}
+
 .card {
-    border: 1px solid #ccc;
+    min-width: 200px; /* Tarjetas más pequeñas */
+    max-width: 220px; /* Tarjetas más pequeñas */
+    flex: 0 0 auto;
+    background: rgba(46, 134, 171, 0.1);
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    border: 1px solid #2E86AB; /* Borde más suave */
+    padding: 8px; /* Menos padding */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    scroll-snap-align: start;
+    cursor: pointer; /* Cambiamos el cursor a pointer */
 }
 
-/* Hover para efecto de elevación */
 .card:hover {
-    transform: scale(1.05);
+    transform: translateY(-3px);
+    box-shadow: 0 2px 8px rgba(46, 134, 171, 0.3); /* Sombra más suave */
 }
 
-/* Imagen dentro de la card */
-.card-img-top {
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    max-height: 200px; /* Limitar la altura de la imagen */
-    object-fit: cover; /* Recortar la imagen si es necesario */
+.card img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 5px;
 }
 
-/* Título del proyecto */
+/* Estilos para el contenido de la card */
+.card h5,
 .card-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #333;
+    font-size: 1rem; /* Tamaño de fuente más pequeño */
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0 0 6px;
+    text-align: center; /* Centrar el título */
 }
 
-/* Botón */
-.btn-primary {
-    background-color: #08646e;
-    border-color: #08646e;
+.card p,
+.card-text {
+    font-size: 0.8rem; /* Tamaño de fuente más pequeño */
+    color: #FFFFFF;
+    line-height: 1.4;
+    margin: 0 0 9px;
 }
 
-.btn-primary:hover {
-    background-color: #064d52;
-    border-color: #064d52;
+.card strong {
+    font-size: 0.75rem; /* Tamaño de fuente más pequeño para habilidades */
+    color: #FFFFFF;
 }
 
-/* Contenedor del carrusel */
-.row.flex-nowrap {
-    padding-bottom: 20px;
-    gap: 15px; /* Espacio entre cards */
+/* Estilos para el cuerpo de la card */
+.card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Asegura que el cuerpo de la card ocupe todo el espacio disponible */
+    padding: 12px; /* Ajusta el padding según sea necesario */
 }
 
-
-
-/* Scrollbar personalizada */
-.row.flex-nowrap::-webkit-scrollbar {
-    height: 8px; /* Altura de la scrollbar horizontal */
+/* Estilos para la sección de habilidades (pie de página) */
+.card-footer {
+    font-size: 0.75rem; /* Tamaño del texto de habilidades */
+    color: #FFFFFF;
+    background-color: transparent; /* Fondo transparente */
+    border-top: 1px solid #2E86AB; /* Línea separadora */
+    padding: 8px 0; /* Padding interno */
+    margin-top: auto; /* Empuja la sección de habilidades hacia abajo */
+}
+/* Mejora del scroll en dispositivos táctiles */
+@media (max-width: 768px) {
+    .projects-container {
+        scroll-snap-type: x proximity;
+    }
+    .card {
+        min-width: 180px; /* Tarjetas más pequeñas en móviles */
+    }
 }
 
-.row.flex-nowrap::-webkit-scrollbar-thumb {
-    background-color: #08646e; /* Color de la scrollbar */
-    border-radius: 4px;
-}
-
-.row.flex-nowrap::-webkit-scrollbar-thumb:hover {
-    background-color: #064d52; /* Color al pasar el mouse */
-}
