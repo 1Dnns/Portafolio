@@ -4,181 +4,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Principal</title>
+    <title>Portafolio - {{ portada.nombre_completo }}</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <!-- Bootstrap CSS para diseño responsivo -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <!-- Font Awesome (íconos) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&family=Poppins:wght@400;600&family=Roboto:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
 </head>
 <body>
-    <!-- Portada -->
-    <header class="bg-dark text-white text-center py-5">
-        <h1>{{ portada.nombre_completo }}</h1>
-        <p class="lead">{{ portada.profesion }}</p>
-    </header>
 
-    <!-- Sección Acerca de -->
-    <section class="container my-5">
-        <div class="row">
-            <div class="col-md-4">
-                {% if acerca_de.foto %}
-                <img src="{{ acerca_de.foto.url }}" alt="Foto de {{ portada.nombre_completo }}" class="img-fluid rounded">
-                {% endif %}
-            </div>
-            <div class="col-md-8">
-                <p>{{ acerca_de.descripcion }}</p>
-                <ul>
-                    <li><strong>Fecha de nacimiento:</strong> {{ acerca_de.fecha_nacimiento }}</li>
-                    <li><strong>Dirección:</strong> {{ acerca_de.direccion }}</li>
-                    <li><strong>Teléfono:</strong> {{ acerca_de.telefono }}</li>
-                    <li><strong>Correo:</strong> {{ acerca_de.correo }}</li>
-                </ul>
-                <div>
-                    {% if acerca_de.linkedin %}<a href="{{ acerca_de.linkedin }}" target="_blank">LinkedIn</a>{% endif %}
-                    {% if acerca_de.github %}<a href="{{ acerca_de.github }}" target="_blank">GitHub</a>{% endif %}
+    <!-- Ícono de menú para pantallas pequeñas -->
+    <div id="menu-icon" class="menu-icon">
+        <i class="fas fa-bars"></i>
+    </div>
+    
+    <!-- Barra lateral -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ acerca_de.foto.url }}" alt="Foto de perfil" class="img-fluid rounded-circle">
+            <h1>{{ portada.nombre_completo }}</h1>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#inicio" class="nav-link active"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#acerca-de" class="nav-link"><i class="fas fa-user"></i> Acerca de</a></li>
+                <li><a href="#habilidades" class="nav-link"><i class="fas fa-code"></i> Habilidades</a></li>
+                <li><a href="#formacion" class="nav-link"><i class="fas fa-graduation-cap"></i> Formación</a></li>
+                <li><a href="#experiencia" class="nav-link"><i class="fas fa-briefcase"></i> Experiencia</a></li>
+                <li><a href="#proyectos" class="nav-link"><i class="fas fa-project-diagram"></i> Proyectos</a></li>
+                <li><a href="#contacto" class="nav-link"><i class="fas fa-envelope"></i> Contacto</a></li>            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            {% if acerca_de.linkedin %}
+            <a href="{{ acerca_de.linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+            {% endif %}
+            {% if acerca_de.github %}
+            <a href="{{ acerca_de.github }}" target="_blank"><i class="fab fa-github"></i></a>
+        {% endif %}
+        </div>
+    </aside>
+    
+    <!-- Contenido principal -->
+    <main id="main">    
+    
+        <!-- Portada -->
+        <header id="inicio" class="bg-dark text-white text-center py-5">
+            <h1>{{ portada.nombre_completo }}</h1>
+            <p class="lead">{{ portada.profesion }}</p>
+        </header>
+
+        <!-- Sección Acerca de -->
+        <section id="acerca-de" class="container my-5">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if acerca_de.foto %}
+                    <img src="{{ acerca_de.foto.url }}" alt="Foto de {{ portada.nombre_completo }}" class="img-fluid rounded">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <p>{{ acerca_de.descripcion }}</p>
+                    <ul>
+                        <li><strong>Fecha de nacimiento:</strong> {{ acerca_de.fecha_nacimiento }}</li>
+                        <li><strong>Dirección:</strong> {{ acerca_de.direccion }}</li>
+                        <li><strong>Teléfono:</strong> {{ acerca_de.telefono }}</li>
+                        <li><strong>Correo:</strong> {{ acerca_de.correo }}</li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Habilidades -->
-    <section class="container my-5">
-        <h2>Habilidades</h2>
-        {% for habilidad in habilidades %}
-        <div>
-            <span>{{ habilidad.nombre }}</span>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: {{ habilidad.nivel }}%;" aria-valuenow="{{ habilidad.nivel }}" aria-valuemin="0" aria-valuemax="100">
-                    {{ habilidad.nivel }}%
+         <!-- Habilidades -->
+        <section id="habilidades" class="container my-5">
+            <h2>Habilidades</h2>
+            {% for habilidad in habilidades %}
+            <div>
+                <span>{{ habilidad.nombre }}</span>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: {{ habilidad.nivel }}%;" aria-valuenow="{{ habilidad.nivel }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ habilidad.nivel }}%
+                    </div>
                 </div>
             </div>
-        </div>
-        {% endfor %}
-    </section>
-
-    <!-- Formación -->
-    <section class="container my-5">
-        <h2>Formación</h2>
-        <ul>
-            {% for formacion in formacion %}
-            <li>
-                <strong>{{ formacion.titulo }}</strong> - {{ formacion.institucion }} ({{ formacion.fecha_inicio }} - {{ formacion.fecha_fin|default:"Presente" }})
-            </li>
             {% endfor %}
-        </ul>
-    </section>
+        </section>
 
-    <!-- Experiencia -->
-    <section class="container my-5">
-        <h2>Experiencia Laboral</h2>
-        <ul>
-            {% for experiencia in experiencias %}
-            <li>
-                <strong>{{ experiencia.cargo }}</strong> en {{ experiencia.empresa }} ({{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin|default:"Presente" }})
-                <p>{{ experiencia.descripcion }}</p>
-            </li>
-            {% endfor %}
-        </ul>
-    </section>
+        <!-- Formación -->
+        <section id="formacion" class="container my-5">
+            <h2>Formación</h2>
+            <ul>
+                {% for formacion in formacion %}
+                <li>
+                    <strong>{{ formacion.titulo }}</strong> - {{ formacion.institucion }} ({{ formacion.fecha_inicio }} - {{ formacion.fecha_fin|default:"Presente" }})
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
 
-    <!-- Proyectos -->
-    <section class="container my-5">
-        <h2 class="text-center mb-4">Proyectos</h2>
+        <!-- Experiencia -->
+        <section id="experiencia" class="container my-5">
+            <h2>Experiencia Laboral</h2>
+            <ul>
+                {% for experiencia in experiencias %}
+                <li>
+                    <strong>{{ experiencia.cargo }}</strong> en {{ experiencia.empresa }} ({{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin|default:"Presente" }})
+                    <p>{{ experiencia.descripcion }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
 
-        <!-- Dashboards & Apps Interactivas -->
-        {% if dashboards_apps %}
-        <h3 class="mt-3 text-center">Dashboards & Apps Interactivas</h3>
-        <div class="row flex-nowrap overflow-auto">
-            {% for proyecto in dashboards_apps %}
-            <div class="col-md-3">
-                <a href="{{ proyecto.link }}" target="_blank" class="card-link">
-                    <div class="card h-100">
-                        {% if proyecto.image %}
-                        <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title text-center">{{ proyecto.title }}</h5>
-                            <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+        <!-- Proyectos -->
+        <section id="proyectos" class="container my-5">
+            <h2 class="text-center mb-4">Proyectos</h2>
+
+            <!-- Dashboards & Apps Interactivas -->
+            {% if dashboards_apps %}
+            <h3 class="mt-3 text-center">Dashboards & Apps Interactivas</h3>
+            <div class="row flex-nowrap overflow-auto">
+                {% for proyecto in dashboards_apps %}
+                <div class="col-md-3">
+                    <a href="{{ proyecto.link }}" target="_blank" class="card-link">
+                        <div class="card h-100">
+                            {% if proyecto.image %}
+                            <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title text-center">{{ proyecto.title }}</h5>
+                                <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+                            </div>
+                            <div class="card-footer">    
+                                <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                            </div>
                         </div>
-                        <div class="card-footer">    
-                            <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+            {% endif %}
 
-        <!-- Notebooks -->
-        {% if notebooks %}
-        <h3 class="mt-3 text-center">Notebooks</h3>
-        <div class="row flex-nowrap overflow-auto">
-            {% for proyecto in notebooks %}
-            <div class="col-md-3">
-                <a href="{{ proyecto.link }}" target="_blank" class="card-link">
-                    <div class="card h-100">
-                        {% if proyecto.image %}
-                        <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title text-center">{{ proyecto.title }}</h5>
-                            <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+            <!-- Notebooks -->
+            {% if notebooks %}
+            <h3 class="mt-3 text-center">Notebooks</h3>
+            <div class="row flex-nowrap overflow-auto">
+                {% for proyecto in notebooks %}
+                <div class="col-md-3">
+                    <a href="{{ proyecto.link }}" target="_blank" class="card-link">
+                        <div class="card h-100">
+                            {% if proyecto.image %}
+                            <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title text-center">{{ proyecto.title }}</h5>
+                                <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+                            </div>
+                            <div class="card-footer">
+                                <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+            {% endif %}
 
-        <!-- Web Development -->
-        {% if web_dev %}
-        <h3 class="mt-3">Web Development</h3>
-        <div class="row flex-nowrap overflow-auto">
-            {% for proyecto in web_dev %}
-            <div class="col-md-3">
-                <a href="{{ proyecto.link }}" target="_blank" class="card-link">
-                    <div class="card h-100">
-                        {% if proyecto.image %}
-                        <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ proyecto.title }}</h5>
-                            <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+            <!-- Web Development -->
+            {% if web_dev %}
+            <h3 class="mt-3">Web Development</h3>
+            <div class="row flex-nowrap overflow-auto">
+                {% for proyecto in web_dev %}
+                <div class="col-md-3">
+                    <a href="{{ proyecto.link }}" target="_blank" class="card-link">
+                        <div class="card h-100">
+                            {% if proyecto.image %}
+                            <img src="{{ proyecto.image.url }}" class="card-img-top" alt="Imagen de {{ proyecto.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ proyecto.title }}</h5>
+                                <p class="card-text">{{ proyecto.description|truncatechars:80 }}</p> <!-- Texto más corto -->
+                            </div>
+                            <div class="card-footer">    
+                                <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
+                            </div>
                         </div>
-                        <div class="card-footer">    
-                            <p><strong>Habilidades:</strong> {{ proyecto.skills }}</p>
-                        </div>
-                    </div>
-                </a>
-            </div>            
-            {% endfor %}
-        </div>
-        {% endif %}
-    </section>
+                    </a>
+                </div>            
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
 
-    <!-- Contacto -->
-    <section class="container my-5">
-        <h2>Contacto</h2>
-        <form>
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Correo Electrónico</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="mensaje">Mensaje</label>
-                <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Enviar</button>
-        </form>
-    </section>
+        <!-- Contacto -->
+        <section id="contacto" class="container my-5">
+            <h2>Contacto</h2>
+            <form>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="mensaje">Mensaje</label>
+                    <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        </section>
+
+    </main>
 
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
