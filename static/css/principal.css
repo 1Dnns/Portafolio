@@ -10,6 +10,30 @@ body {
     padding: 0;
 }
 
+/* --------------------------------------------------------------- */
+/* --------------------------- header ----------------------------- */
+/* --------------------------------------------------------------- */
+
+.header-bg {
+    background-image: url("/static/img/header1.jpg"); /* Prueba con esta ruta absoluta */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* --------------------------------------------------------------- */
+/* --------------------------- Menu ----------------------------- */
+/* --------------------------------------------------------------- */
+
+
+
 /* Estilos para el ícono de menú */
 .menu-icon {
     display: none; /* Oculto por defecto */
@@ -34,6 +58,11 @@ body {
 .menu-icon:hover {
     background-color: #094585; /* Color celeste más oscuro */
 }
+
+/* --------------------------------------------------------------- */
+/* --------------------------- Sidebar ----------------------------- */
+/* --------------------------------------------------------------- */
+
 
 /* Barra lateral */
 #sidebar {
@@ -121,10 +150,14 @@ body {
     color: #2E86AB;
 }
 
+/* --------------------------------------------------------------- */
+/* --------------------------- responsive ----------------------------- */
+/* --------------------------------------------------------------- */
+
 /* Contenido principal */
 #main {
     margin-left: 250px;
-    padding: 20px;
+    padding: 0px;
     transition: margin-left 0.3s ease; /* Animación al mostrar/ocultar la sidebar */
 }
 
@@ -147,6 +180,11 @@ body {
         transform: translateX(0);
     }
 }
+
+/* --------------------------------------------------------------- */
+/* --------------------------- otros ----------------------------- */
+/* --------------------------------------------------------------- */
+
 
 /* Estilos para los títulos de las secciones */
 section h2 {

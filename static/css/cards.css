@@ -11,44 +11,14 @@ h3.mt-3.text-center {
     margin-top: 50px;
     overflow-x: hidden;
     position: relative;
-    padding: 20px 0;
+    padding: 0px 0;
 }
 
 .projects-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 4 tarjetas por fila */
     gap: 15px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
     padding-bottom: 10px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin; /* Scroll más fino */
-    scrollbar-color: #888 #f1f1f1; /* Color del scroll */
-}
-
-/* --------------------------------------------------------------- */
-/* --------------------------- Scrollbar ------------------------- */
-/* --------------------------------------------------------------- */
-
-
-/* Estilo para navegadores WebKit (Chrome, Safari, Edge) */
-.projects-container::-webkit-scrollbar {
-    width: 6px; /* Ancho del scroll */
-    height: 6px; /* Altura del scroll */
-}
-
-.projects-container::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Color de fondo del track */
-    border-radius: 10px;
-}
-
-.projects-container::-webkit-scrollbar-thumb {
-    background: #888; /* Color del thumb */
-    border-radius: 10px;
-    transition: background 0.3s ease; /* Transición suave */
-}
-
-.projects-container::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Color del thumb al pasar el mouse */
 }
 
 /* --------------------------------------------------------------- */
@@ -59,18 +29,20 @@ h3.mt-3.text-center {
 .card-link {
     text-decoration: none; /* Eliminamos el subrayado del enlace */
     color: inherit; /* Heredamos el color del texto */
+    margin-left: 20px;
+    height: 305px;
+    width: 250px;
 }
 
 .card {
     min-width: 200px; /* Tarjetas más pequeñas */
     max-width: 220px; /* Tarjetas más pequeñas */
     flex: 0 0 auto;
-    background: rgba(46, 134, 171, 0.1);
+    background: #bdc3c7;
     border-radius: 8px;
     border: 1px solid #2E86AB; /* Borde más suave */
     padding: 8px; /* Menos padding */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    scroll-snap-align: start;
     cursor: pointer; /* Cambiamos el cursor a pointer */
 }
 
@@ -90,7 +62,7 @@ h3.mt-3.text-center {
 .card-title {
     font-size: 1rem; /* Tamaño de fuente más pequeño */
     font-weight: 600;
-    color: #FFFFFF;
+    color: #1c265c;
     margin: 0 0 6px;
     text-align: center; /* Centrar el título */
 }
@@ -98,14 +70,14 @@ h3.mt-3.text-center {
 .card p,
 .card-text {
     font-size: 0.8rem; /* Tamaño de fuente más pequeño */
-    color: #FFFFFF;
+    color: #1c265c;
     line-height: 1.4;
     margin: 0 0 9px;
 }
 
 .card strong {
     font-size: 0.75rem; /* Tamaño de fuente más pequeño para habilidades */
-    color: #FFFFFF;
+    color: #0a154a;
 }
 
 /* Estilos para el cuerpo de la card */
@@ -121,17 +93,13 @@ h3.mt-3.text-center {
     font-size: 0.75rem; /* Tamaño del texto de habilidades */
     color: #FFFFFF;
     background-color: transparent; /* Fondo transparente */
-    border-top: 1px solid #2E86AB; /* Línea separadora */
+    border-top: 1px solid #094585; /* Línea separadora */
     padding: 8px 0; /* Padding interno */
     margin-top: auto; /* Empuja la sección de habilidades hacia abajo */
 }
 /* Mejora del scroll en dispositivos táctiles */
 @media (max-width: 768px) {
-    .projects-container {
-        scroll-snap-type: x proximity;
-    }
     .card {
         min-width: 180px; /* Tarjetas más pequeñas en móviles */
     }
 }
-
