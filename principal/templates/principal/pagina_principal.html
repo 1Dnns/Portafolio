@@ -52,12 +52,14 @@
     <!-- Contenido principal -->
     <main id="main">    
     
-        <!-- Portada -->
         <header id="inicio" class="header-bg text-white text-center py-5"
-            style="background-image: url('{% static 'img/header4.jpg' %}'); background-size: cover; background-position: center;" >
+        style="background-image: url('{% static 'img/header5.jpg' %}');">
             <h1>{{ portada.nombre_completo }}</h1>
-            <p class="lead">{{ portada.profesion }}</p>
+            <div class="profession-container">
+                <p class="lead">{{ portada.profesion }}</p>
+            </div>
         </header>
+
         <!-- Sección Acerca de -->
         <section id="acerca-de" class="container my-5">
             <div class="row">
