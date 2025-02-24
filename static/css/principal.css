@@ -10,6 +10,45 @@ body {
     padding: 0;
 }
 
+/* Estilos para el título de la sección */
+.section-title {
+    text-align: center; /* Centra el título */
+    margin-bottom: 30px;
+    position: relative; /* Necesario para posicionar las líneas */
+}
+
+.section-title h2 {
+    font-family: 'Raleway', sans-serif;
+    font-size: 2.5rem;
+    color: #094585;
+    display: inline-block; /* Permite que las líneas se alineen correctamente */
+    position: relative;
+    padding: 0 20px; /* Espacio entre el texto y las líneas */
+    background: white; /* Fondo para que el texto no se superponga con las líneas */
+    z-index: 1; /* Asegura que el texto esté por encima de las líneas */
+}
+
+.section-title h2::before,
+.section-title h2::after {
+    content: '';
+    position: absolute;
+    top: 50%; /* Alinea las líneas a la mitad de la altura del texto */
+    width: 100%; /* Ancho completo de la pantalla */
+    height: 2px; /* Grosor de la línea */
+    background-color: #094585; /* Color de la línea */
+    z-index: -1; /* Coloca las líneas detrás del texto */
+}
+
+.section-title h2::before {
+    right: 100%; /* Línea a la izquierda del texto */
+    margin-right: 20px; /* Espacio entre la línea y el texto */
+}
+
+.section-title h2::after {
+    left: 100%; /* Línea a la derecha del texto */
+    margin-left: 20px; /* Espacio entre la línea y el texto */
+}
+
 /* --------------------------------------------------------------- */
 /* --------------------------- header ----------------------------- */
 /* --------------------------------------------------------------- */
@@ -265,4 +304,53 @@ section h2 {
 #experiencia ul li p {
     margin: 5px 0 0;
     color: #094585;
+}
+
+/* --------------------------------------------------------------- */
+/* --------------------------- Perfil ----------------------------- */
+/* --------------------------------------------------------------- */
+
+
+#perfil p {
+    font-size: 1.07rem;
+    margin-top: 2%;
+    margin-bottom: 1rem;
+}
+
+.idiomas {
+    margin-top: 5px;
+}
+
+/* Estilos para las listas con íconos */
+.lista-detalles {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.lista-detalles li {
+    font-size: 1rem;
+    color: #094585;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.lista-detalles li i {
+    margin-right: 10px;
+    color: #094585; /* Color del ícono */
+}
+
+/* Estilos para el botón de descargar CV */
+.btn-primary {
+    background-color: #094585;
+    border-color: #094585;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #07376e;
+    border-color: #07376e;
 }

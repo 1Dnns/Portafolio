@@ -18,6 +18,8 @@ class AcercaDe(models.Model):
     github = models.URLField(blank=True, null=True)
     otra_red_social = models.URLField(blank=True, null=True, help_text="Opcionalmente agrega otra red social")
 
+    cv = models.FileField(upload_to='cv/', blank=True, null=True, help_text="Sube tu CV en formato PDF")
+
     def __str__(self):
         return f"Acerca de {self.correo}"
 
