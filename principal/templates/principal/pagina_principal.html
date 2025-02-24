@@ -123,28 +123,59 @@
         </section>
 
 
-         <!-- Habilidades -->
+        <!-- Habilidades -->
         <section id="habilidades" class="container my-5">
-            <h2>Habilidades</h2>
-            {% for habilidad in habilidades %}
-            <div>
-                <span>{{ habilidad.nombre }}</span>
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" style="width: {{ habilidad.nivel }}%;" aria-valuenow="{{ habilidad.nivel }}" aria-valuemin="0" aria-valuemax="100">
-                        {{ habilidad.nivel }}%
-                    </div>
+            <div class="section-title">
+                <h2>Habilidades</h2>
+            </div>
+            <div class="row">
+                <!-- Columna de Lenguajes -->
+                <div class="col-md-6 ">
+                    <h3 class="subtitulo-habilidad">Lenguajes de programación</h3>
+                    {% for habilidad in habilidades %}
+                        {% if habilidad.categoria == "lenguaje" %}
+                        <div class="habilidad-item">
+                            <p class="habilidad-nombre">{{ habilidad.nombre }}</p>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: {{ habilidad.nivel }}%;" aria-valuenow="{{ habilidad.nivel }}" aria-valuemin="0" aria-valuemax="100">
+                                    {{ habilidad.nivel }}%
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Columna de Tecnologías -->
+                <div class="col-md-6 ">
+                    <h3 class="subtitulo-habilidad">Herramientas y Tecnologías</h3>
+                    {% for habilidad in habilidades %}
+                        {% if habilidad.categoria == "tecnologia" %}
+                        <div class="habilidad-item">
+                            <p class="habilidad-nombre">{{ habilidad.nombre }}</p>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: {{ habilidad.nivel }}%;" aria-valuenow="{{ habilidad.nivel }}" aria-valuemin="0" aria-valuemax="100">
+                                    {{ habilidad.nivel }}%
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-            {% endfor %}
         </section>
 
         <!-- Formación -->
         <section id="formacion" class="container my-5">
-            <h2>Formación</h2>
+            <div class="section-title">
+                <h2>Formación</h2>
+            </div>
             <ul>
                 {% for formacion in formacion %}
                 <li>
-                    <strong>{{ formacion.titulo }}</strong> - {{ formacion.institucion }} ({{ formacion.fecha_inicio }} - {{ formacion.fecha_fin|default:"Presente" }})
+                    <strong>{{ formacion.titulo }}</strong>
+                    <span>{{ formacion.institucion }}</span>
+                    <span>{{ formacion.fecha_inicio }} - {{ formacion.fecha_fin|default:"Presente" }}</span>
                 </li>
                 {% endfor %}
             </ul>
@@ -152,11 +183,15 @@
 
         <!-- Experiencia -->
         <section id="experiencia" class="container my-5">
-            <h2>Experiencia Laboral</h2>
+            <div class="section-title">
+                <h2>Experiencia Laboral</h2>
+            </div>
             <ul>
                 {% for experiencia in experiencias %}
                 <li>
-                    <strong>{{ experiencia.cargo }}</strong> en {{ experiencia.empresa }} ({{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin|default:"Presente" }})
+                    <strong>{{ experiencia.cargo }}</strong>
+                    <span>{{ experiencia.empresa }}</span>
+                    <span>{{ experiencia.fecha_inicio }} - {{ experiencia.fecha_fin|default:"Presente" }}</span>
                     <p>{{ experiencia.descripcion }}</p>
                 </li>
                 {% endfor %}
@@ -165,8 +200,9 @@
 
         <!-- Proyectos -->
         <section id="proyectos" class="container my-5">
-            <h2 class="text-center mb-4">Proyectos</h2>
-
+            <div class="section-title">
+                <h2 class="text-center mb-4">Proyectos</h2>
+            </div>
             <!-- Dashboards & Apps Interactivas -->
             {% if dashboards_apps %}
             <h3 class="mt-3 text-center">Dashboards & Apps Interactivas</h3>
@@ -239,8 +275,10 @@
 
         <!-- Contacto -->
         <section id="contacto" class="container my-5">
-            <h2>Contacto</h2>
-            <form>
+            <div class="section-title">
+                <h2>Contacto</h2>
+            </div>
+            <form action="https://formspree.io/f/mdkarelp" method="POST">
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -252,7 +290,7 @@
                 <div class="form-group">
                     <label for="mensaje">Mensaje</label>
                     <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
-                </div>
+                </div class="text-center">
                 <button type="submit" class="btn btn-primary">Enviar</button>
             </form>
         </section>

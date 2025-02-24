@@ -14,39 +14,33 @@ body {
 .section-title {
     text-align: center; /* Centra el título */
     margin-bottom: 30px;
-    position: relative; /* Necesario para posicionar las líneas */
 }
 
 .section-title h2 {
     font-family: 'Raleway', sans-serif;
     font-size: 2.5rem;
     color: #094585;
-    display: inline-block; /* Permite que las líneas se alineen correctamente */
+    display: inline-block; /* Permite que el subrayado se ajuste al texto */
     position: relative;
-    padding: 0 20px; /* Espacio entre el texto y las líneas */
-    background: white; /* Fondo para que el texto no se superponga con las líneas */
-    z-index: 1; /* Asegura que el texto esté por encima de las líneas */
+    padding-bottom: 10px; /* Espacio entre el texto y el subrayado */
 }
 
-.section-title h2::before,
 .section-title h2::after {
     content: '';
     position: absolute;
-    top: 50%; /* Alinea las líneas a la mitad de la altura del texto */
-    width: 100%; /* Ancho completo de la pantalla */
-    height: 2px; /* Grosor de la línea */
-    background-color: #094585; /* Color de la línea */
-    z-index: -1; /* Coloca las líneas detrás del texto */
-}
-
-.section-title h2::before {
-    right: 100%; /* Línea a la izquierda del texto */
-    margin-right: 20px; /* Espacio entre la línea y el texto */
+    left: 0;
+    bottom: 0;
+    width: 100%; /* El subrayado tiene el mismo ancho que el texto */
+    height: 3px; /* Grosor del subrayado */
+    background-color: #094585; /* Color del subrayado */
 }
 
 .section-title h2::after {
-    left: 100%; /* Línea a la derecha del texto */
-    margin-left: 20px; /* Espacio entre la línea y el texto */
+    transition: width 0.3s ease; /* Animación al hacer hover */
+}
+
+.section-title h2:hover::after {
+    width: 0; /* El subrayado desaparece al hacer hover */
 }
 
 /* --------------------------------------------------------------- */
@@ -268,42 +262,71 @@ body {
 }
 
 /* --------------------------------------------------------------- */
-/* --------------------------- otros ----------------------------- */
+/* ----------------- Formacion y Experiencia --------------------- */
 /* --------------------------------------------------------------- */
 
-
-/* Estilos para los títulos de las secciones */
-section h2 {
-    font-family: 'Raleway', sans-serif;
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #094585;
+/* Estilos para las secciones de Formación y Experiencia */
+#formacion,
+#experiencia {
+    padding: 20px 0;
 }
 
-/* Estilos para las listas de Formación y Experiencia */
+/* Estilos para las listas */
 #formacion ul,
 #experiencia ul {
     list-style: none;
     padding: 0;
 }
 
+/* Estilos para cada ítem de formación y experiencia */
 #formacion ul li,
 #experiencia ul li {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-left: 3px solid #2E86AB;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    background-color: #ffffff; /* Fondo blanco */
+    border-left: 4px solid #094585; /* Borde lateral */
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animación al hacer hover */
 }
 
+#formacion ul li:hover,
+#experiencia ul li:hover {
+    transform: translateY(-5px); /* Efecto de elevación al hacer hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada al hacer hover */
+}
+
+/* Estilos para los títulos (cargo, título académico) */
 #formacion ul li strong,
 #experiencia ul li strong {
     color: #094585;
+    font-size: 1.2rem;
+    display: block; /* Hace que el título ocupe su propia línea */
+    margin-bottom: 5px;
 }
 
+/* Estilos para los detalles (institución, empresa, fechas) */
+#formacion ul li,
+#experiencia ul li {
+    color: #333;
+    font-size: 1rem;
+    max-width: 95%;
+    margin-left: 1%;
+}
+
+#formacion ul li span,
+#experiencia ul li span {
+    display: block; /* Hace que cada detalle ocupe su propia línea */
+    margin-bottom: 5px;
+    color: #666;
+}
+
+/* Estilos para la descripción de la experiencia */
 #experiencia ul li p {
-    margin: 5px 0 0;
-    color: #094585;
+    margin: 10px 0 0;
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 /* --------------------------------------------------------------- */
@@ -353,4 +376,133 @@ section h2 {
 .btn-primary:hover {
     background-color: #07376e;
     border-color: #07376e;
+}
+
+/* --------------------------------------------------------------- */
+/* -------------------------- Habilidades ------------------------ */
+/* --------------------------------------------------------------- */
+
+/* Estilos para la sección de habilidades */
+#habilidades {
+    padding: 20px 0;
+}
+
+/* Subtítulos de las categorías */
+.subtitulo-habilidad {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.8rem;
+    color: #094585;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+#habilidades .row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+/* Estilos para cada ítem de habilidad */
+.habilidad-item {
+    margin-bottom: 20px;
+}
+
+.habilidad-nombre {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* Estilos para la barra de progreso */
+.progress {
+    height: 10px; /* Altura de la barra de progreso */
+    background-color: #e9ecef; /* Color de fondo de la barra */
+    border-radius: 5px; /* Bordes redondeados */
+    overflow: hidden; /* Evita que el contenido se desborde */
+}
+
+.progress-bar {
+    background-color: #094585; /* Color de la barra de progreso */
+    transition: width 0.5s ease; /* Animación suave al cambiar el ancho */
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0)); /* Efecto de degradado */
+}
+
+/* Efecto hover en la barra de progreso */
+.progress-bar:hover {
+    background-color: #07376e; /* Cambia el color al hacer hover */
+}
+
+/* --------------------------------------------------------------- */
+/* --------------------------- Contacto ----------------------------- */
+/* --------------------------------------------------------------- */
+
+/* Estilos para la sección de Contacto */
+#contacto {
+    padding: 20px 0;
+    background-color: #fff; /* Fondo claro */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Estilos para el formulario */
+#contacto form {
+    max-width: 600px; /* Ancho máximo del formulario */
+    margin: 0 auto; /* Centrar el formulario */
+    padding: 20px;
+}
+
+/* Estilos para los grupos de formulario */
+#contacto .form-group {
+    margin-bottom: 20px;
+}
+
+#contacto .form-group label {
+    font-size: 1rem;
+    color: #094585; /* Color azul oscuro */
+    font-weight: 500; /* Texto seminegrita */
+    margin-bottom: 5px;
+    display: block;
+}
+
+#contacto .form-group input,
+#contacto .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc; /* Borde gris */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: border-color 0.3s ease; /* Animación suave */
+}
+
+#contacto .form-group input:focus,
+#contacto .form-group textarea:focus {
+    border-color: #094585; /* Borde azul al enfocar */
+    outline: none; /* Eliminar el contorno predeterminado */
+}
+
+/* Estilos para el botón de enviar */
+#contacto button[type="submit"] {
+    background-color: #094585; /* Color azul oscuro */
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff; /* Texto blanco */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Animación suave */
+    margin-left: 43%;
+}
+
+#contacto button[type="submit"]:hover {
+    background-color: #07376e; /* Color azul más oscuro al hacer hover */
 }
