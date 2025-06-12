@@ -103,7 +103,7 @@ DATABASES = {
     },
     'dashboard': {  # Base de datos del dashboard
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DIPUTADOS',   
+        'NAME': 'DIPUTADOS_ACT',   
         'USER': 'Dnns',
         'PASSWORD': 'Maria1961.',
         'HOST': 'localhost',
