@@ -156,10 +156,9 @@ html.Div([
         style={'color': '#ffffff', 'textAlign': 'center'}
             ),
         html.P(
-            "El puntaje de asistencia que se muestra en el gráfico refleja el compromiso de los diputados con sus deberes legislativos. "
-            "Este puntaje fue calculado considerando el total de sesiones realizadas, ajustado por las inasistencias. "
-            "Se distingue entre tres tipos de inasistencias: aquellas justificadas que no afectan, justificadas que sí rebajan, "
-            "y las no justificadas. Cada tipo tiene un impacto diferente, ponderado según su relevancia, para ofrecer un análisis más objetivo.",
+            "El puntaje de asistencia se obtiene restando al total de sesiones computables las inasistencias, ponderadas según su tipo: " \
+            "las justificadas que no afectan descuentan 1 punto cada una; las justificadas que sí rebajan, 1.5 puntos; y las no justificadas, 2 puntos. " \
+            "Este sistema busca reflejar de manera diferenciada el impacto de cada ausencia, priorizando la responsabilidad en la asistencia a las sesiones legislativas.",
             style={'color': '#ffffff', 'textAlign': 'center'}
             )
     ], style={

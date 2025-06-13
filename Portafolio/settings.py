@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config, UndefinedValueError
 import os
 
 
@@ -22,16 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&zs040g=)8dkc+pf5g2d@x!@rlwiwdhvqtb(k46yw(b=we*&!1'
+SECRET_KEY = config('SECRET_KEY', cast=str)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
 
+try:
+    external_hostname = config('RENDER_EXTERNAL_HOSTNAME')
+    ALLOWED_HOSTS.append(external_hostname)
+except UndefinedValueError:
+    pass  # La variable no existe en entorno local, no hay problema
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -60,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',  # Asegúrate de que esté en este orden #configuracion adicional para utilizzr dash
     'django_plotly_dash.middleware.ExternalRedirectionMiddleware',  # Lo puedes dejar aquí #configuracion adicional para utilizzr dash
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir archivos estáticos en producción
 ]
 
 # Configuración para permitir que se cargue en un iframe desde el mismo dominio
@@ -95,19 +101,19 @@ WSGI_APPLICATION = 'Portafolio.wsgi.application'
 DATABASES = {
     'default': {  # Base de datos principal (portafolio)
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'portafolio',
-        'USER': 'Dnns',
-        'PASSWORD': 'Maria1961.',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': config('DB_NAME_DEFAULT', cast=str),
+        'USER': config('DB_USER_DEFAULT', cast=str),
+        'PASSWORD': config('DB_PASSWORD_DEFAULT', cast=str),
+        'HOST': config('DB_HOST_DEFAULT', cast=str),
+        'PORT': config('DB_PORT_DEFAULT', cast=str),
     },
     'dashboard': {  # Base de datos del dashboard
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DIPUTADOS_ACT',   
-        'USER': 'Dnns',
-        'PASSWORD': 'Maria1961.',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': config('DB_NAME_DASHBOARD', cast=str),  
+        'USER': config('DB_USER_DASHBOARD', cast=str),
+        'PASSWORD': config('DB_PASSWORD_DASHBOARD', cast=str),
+        'HOST': config('DB_HOST_DASHBOARD', cast=str),
+        'PORT': config('DB_PORT_DASHBOARD', cast=str),
     }
 }
 
@@ -152,19 +158,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-#STATIC_URL = 'static/'
-
-#configuracion adicional para utilizzr dash
 STATIC_URL = '/static/'
 
-# Estos son necesarios para que Dash pueda servir los archivos estáticos
-#configuracion adicional para utilizzr dash
+# Archivos estáticos en desarrollo
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-#configuracion adicional para utilizzr dash
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Esto es para la recopilación de archivos estáticos en producción.
+# En producción (Render)
+if not config('DEBUG', default=True, cast=bool):
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Configuración para los componentes de Plotly Dash
 PLOTLY_COMPONENTS = [
