@@ -160,18 +160,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# Archivos estáticos (CSS, JS, imágenes locales)
 STATIC_URL = '/static/'
 
-# Archivos estáticos en desarrollo
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# En producción (Render)
-if not config('DEBUG', default=True, cast=bool):
-    STATIC_ROOT = BASE_DIR / "staticfiles"
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Configuración para los componentes de Plotly Dash
 PLOTLY_COMPONENTS = [
