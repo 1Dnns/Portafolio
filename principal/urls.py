@@ -5,6 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.pagina_principal, name='pagina_principal'),  # Página principal
+    # Nueva ruta para descargar CV
+    path('descargar-cv/', views.download_cv, name='download_cv'),
 ]
 
 
