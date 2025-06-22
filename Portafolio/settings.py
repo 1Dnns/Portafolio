@@ -159,17 +159,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]  # Archivos estáticos en desarrollo
+STATIC_ROOT = BASE_DIR / "staticfiles"    # Ruta para collectstatic (siempre necesario)
 
-# Archivos estáticos en desarrollo
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
-# En producción (Render)
+# Configuración para producción (Render)
 if not config('DEBUG', default=True, cast=bool):
-    STATIC_ROOT = BASE_DIR / "staticfiles"
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 
 # Configuración para los componentes de Plotly Dash
 PLOTLY_COMPONENTS = [
