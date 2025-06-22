@@ -4,3 +4,6 @@
 # Archivos de caché de Python
 __pycache__/
 *.py[cod]
+
+
+staticfiles/

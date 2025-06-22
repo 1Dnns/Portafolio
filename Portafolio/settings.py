@@ -30,6 +30,15 @@ DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
 
+
+# Para producción (DEBUG=False)
+if not DEBUG:
+    ALLOWED_HOSTS = [
+        'portafolio-8pck.onrender.com',  # Reemplaza con tu dominio en Render
+        'localhost',                     # Para pruebas locales
+        '127.0.0.1',                     # Para pruebas locales
+    ]
+
 try:
     external_hostname = config('RENDER_EXTERNAL_HOSTNAME')
     ALLOWED_HOSTS.append(external_hostname)
@@ -38,6 +47,7 @@ except UndefinedValueError:
 
 # Application definition
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',  # Soporte para desarrollo (opcional)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,6 +67,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir archivos estáticos en producción
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,7 +76,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',  # Asegúrate de que esté en este orden #configuracion adicional para utilizzr dash
     'django_plotly_dash.middleware.ExternalRedirectionMiddleware',  # Lo puedes dejar aquí #configuracion adicional para utilizzr dash
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir archivos estáticos en producción
 ]
 
 # Configuración para permitir que se cargue en un iframe desde el mismo dominio
@@ -158,14 +168,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# 3. Configuración básica de archivos estáticos (ya la tienes)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]  # Archivos estáticos en desarrollo
-STATIC_ROOT = BASE_DIR / "staticfiles"    # Ruta para collectstatic (siempre necesario)
+STATICFILES_DIRS = [BASE_DIR / "static"]  # Desarrollo
+STATIC_ROOT = BASE_DIR / "staticfiles"     # Producción
 
-# Configuración para producción (Render)
+# 4. Configuración específica para producción (Render)
 if not config('DEBUG', default=True, cast=bool):
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # Opciones adicionales recomendadas para Whitenoise:
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_MANIFEST_STRICT = False
 
+   
 # Configuración para los componentes de Plotly Dash
 PLOTLY_COMPONENTS = [
     'dash_core_components',
