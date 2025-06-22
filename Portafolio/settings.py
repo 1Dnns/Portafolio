@@ -53,7 +53,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',  # Déjalo solo una vez aquí
+    'cloudinary',  # Para manejar imágenesAdd commentMore actions
+    'cloudinary_storage',  # Almacenamiento de Cloudinary
+    'django.contrib.staticfiles',  # Para archivos estáticos
     'principal',
     'dashboard',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig', #configuracion adicional para utilizzr dash
@@ -131,8 +133,8 @@ DATABASE_ROUTERS = ['Portafolio.database_router.DashboardRouter']
 
 
 #Media
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -210,3 +212,14 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Para desarrollo local
     },
 }
+
+# Configuración de Cloudinary para manejar imágenesAdd commentMore actions
+CLOUDINARY_STORAGE = {
+    'cloud_name': config('CLOUDINARY_CLOUD_NAME', cast=str),
+    'api_key': config('CLOUDINARY_API_KEY', cast=str),
+    'api_secret': config('CLOUDINARY_API_SECRET', cast=str),
+    'secure': True,  # Usa HTTPS para las URLs de Cloudinary
+}
+# Configuración de almacenamiento de archivos multimedia
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'

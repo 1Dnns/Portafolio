@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 class Portada(models.Model):
     nombre_completo = models.CharField(max_length=100, default="Nombre por defecto")
@@ -8,7 +9,7 @@ class Portada(models.Model):
         return self.nombre_completo
 
 class AcercaDe(models.Model):
-    foto = models.ImageField(upload_to='acerca_de/', blank=True) #se guardara en la ruta MEDIA_ROOT/acercaDe
+    foto = models.ImageField(upload_to='acerca_de/', storage=MediaCloudinaryStorage(),blank=True) #se guardara en la ruta MEDIA_ROOT/acercaDe
     descripcion = models.TextField(blank=True, null=True)  # Descripción opcional
     fecha_nacimiento = models.DateField(default="2000-01-01")  # Fecha predeterminada
     direccion = models.CharField(max_length=255, default="Dirección no especificada")
@@ -18,7 +19,7 @@ class AcercaDe(models.Model):
     github = models.URLField(blank=True, null=True)
     otra_red_social = models.URLField(blank=True, null=True, help_text="Opcionalmente agrega otra red social")
 
-    cv = models.FileField(upload_to='cv/', blank=True, null=True, help_text="Sube tu CV en formato PDF")
+    cv = models.FileField(upload_to='cv/', storage=MediaCloudinaryStorage(), blank=True, null=True, help_text="Sube tu CV en formato PDF")
 
     def __str__(self):
         return f"Acerca de {self.correo}"
@@ -70,7 +71,7 @@ class Proyecto(models.Model):
         choices=CATEGORY_CHOICES,
         default='Otros'
     ) 
-    image = models.ImageField(upload_to='projects/', blank=True, null=True)  
+    image = models.ImageField(upload_to='projects/', storage=MediaCloudinaryStorage(), blank=True, null=True)  
     link = models.URLField(blank=True, null=True)                 
 
     def __str__(self):
