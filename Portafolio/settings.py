@@ -30,11 +30,12 @@ DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
 
-
 # Para producción (DEBUG=False)
 if not DEBUG:
     ALLOWED_HOSTS = [
-        'portafolio-8pck.onrender.com',  # Reemplaza con tu dominio en Render
+        'portafolio-8pck.onrender.com',  # Dominio original de Render
+        'www.denisbravo.com',            # Tu dominio personalizado con www
+        'denisbravo.com',                # Tu dominio sin www
         'localhost',                     # Para pruebas locales
         '127.0.0.1',                     # Para pruebas locales
     ]
