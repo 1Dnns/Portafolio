@@ -5,5 +5,5 @@
 __pycache__/
 *.py[cod]
 
-
+# archivos generados por collectstatic
 staticfiles/

@@ -1,11 +1,10 @@
-# 🌐 Portafolio Personal – Denis Bravo
+# 🌐 Portafolio Web Profesional – Denis Bravo, Data Scientist
 
 Este es mi portafolio profesional desarrollado con **Django**, donde presento mis proyectos, experiencia y habilidades en ciencia de datos, machine learning y desarrollo web.
 
 El sitio cuenta con una interfaz limpia, adaptable y funcional, diseñada para destacar tanto el contenido como la estructura técnica del backend.
 
-> 🔗 **Versión en línea:** [https://tu-dominio-aqui.com](https://tu-dominio-aqui.com) _(en proceso de despliegue)_
-
+> 🔗 **Versión en línea:** [https://www.denisbravo.com/](https://www.denisbravo.com/)
 ---
 
 ## 🧰 Tecnologías utilizadas
@@ -18,6 +17,7 @@ El sitio cuenta con una interfaz limpia, adaptable y funcional, diseñada para d
 - **HTML / CSS / JavaScript**
 - **Render** – (para el despliegue de la app web)
 - **Git / GitHub** – Control de versiones
+- **Cloudinary** – Almacenamiento de archivos multimedia (imágenes, CV, etc.)
 
 ---
 
@@ -40,7 +40,7 @@ El sitio cuenta con una interfaz limpia, adaptable y funcional, diseñada para d
 
 ```bash
 # 1. Clona el repositorio
-git clone https://github.com/tu-usuario/portafolio.git
+git clone https://github.com/1Dnns/portafolio.git
 cd portafolio
 
 # 2. Crea y activa un entorno virtual
