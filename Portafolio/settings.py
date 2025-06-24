@@ -30,6 +30,16 @@ DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
 
+# Para producción (DEBUG=False)
+if not DEBUG:
+    ALLOWED_HOSTS = [
+        'portafolio-8pck.onrender.com',  # Dominio original de Render
+        'www.denisbravo.com',            # Tu dominio personalizado con www
+        'denisbravo.com',                # Tu dominio sin www
+        'localhost',                     # Para pruebas locales
+        '127.0.0.1',                     # Para pruebas locales
+    ]
+
 try:
     external_hostname = config('RENDER_EXTERNAL_HOSTNAME')
     ALLOWED_HOSTS.append(external_hostname)
@@ -38,13 +48,14 @@ except UndefinedValueError:
 
 # Application definition
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',  # Soporte para desarrollo (opcional)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary',
-    'cloudinary_storage',  # Requerido para Cloudinary
+    'cloudinary',  # Para manejar imágenesAdd commentMore actions
+    'cloudinary_storage',  # Almacenamiento de Cloudinary
     'django.contrib.staticfiles',  # Para archivos estáticos
     'principal',
     'dashboard',
@@ -59,6 +70,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir archivos estáticos en producción
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,7 +79,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',  # Asegúrate de que esté en este orden #configuracion adicional para utilizzr dash
     'django_plotly_dash.middleware.ExternalRedirectionMiddleware',  # Lo puedes dejar aquí #configuracion adicional para utilizzr dash
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir archivos estáticos en producción
 ]
 
 # Configuración para permitir que se cargue en un iframe desde el mismo dominio
@@ -160,19 +171,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# 3. Configuración básica de archivos estáticos (ya la tienes)
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]  # Desarrollo
+STATIC_ROOT = BASE_DIR / "staticfiles"     # Producción
 
-# Archivos estáticos en desarrollo
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
-# En producción (Render)
+# 4. Configuración específica para producción (Render)
 if not config('DEBUG', default=True, cast=bool):
-    STATIC_ROOT = BASE_DIR / "staticfiles"
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # Opciones adicionales recomendadas para Whitenoise:
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_MANIFEST_STRICT = False
 
-
+   
 # Configuración para los componentes de Plotly Dash
 PLOTLY_COMPONENTS = [
     'dash_core_components',
@@ -203,15 +214,13 @@ CHANNEL_LAYERS = {
     },
 }
 
-###################################################################
-# Cloudinary configuration
-# Cloudinary configuration (¡sin condiciones DEBUG!)
-
+# Configuración de Cloudinary para manejar imágenesAdd commentMore actions
 CLOUDINARY_STORAGE = {
-    'cloud_name': config('CLOUDINARY_CLOUD_NAME'), 
-    'api_key': config('CLOUDINARY_API_KEY'),
-    'api_secret': config('CLOUDINARY_API_SECRET'),
-    'secure': True,  # Fuerza HTTPS
+    'cloud_name': config('CLOUDINARY_CLOUD_NAME', cast=str),
+    'api_key': config('CLOUDINARY_API_KEY', cast=str),
+    'api_secret': config('CLOUDINARY_API_SECRET', cast=str),
+    'secure': True,  # Usa HTTPS para las URLs de Cloudinary
 }
+# Configuración de almacenamiento de archivos multimedia
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'

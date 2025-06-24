@@ -1,5 +1,6 @@
 from cloudinary_storage.storage import MediaCloudinaryStorage
 from django.db import models
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 class Portada(models.Model):
     nombre_completo = models.CharField(max_length=100, default="Nombre por defecto")

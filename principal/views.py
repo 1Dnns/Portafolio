@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from .models import Portada, AcercaDe, Habilidad, Formacion, ExperienciaLaboral, Proyecto
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect 
 from urllib.parse import urlparse, urlunparse
-
 
 def pagina_principal(request):
     # Obtenemos la información necesaria para la página principal
